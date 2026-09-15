@@ -1,0 +1,10 @@
+node_modules
+server/node_modules
+android
+uploads
+*.apk
+*.aab
+.git
+.env
+.vscode
+.idea
