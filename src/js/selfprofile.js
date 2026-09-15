@@ -216,8 +216,12 @@
               '<div class="form-group" style="margin-top:8px;"><label>Atau warna bebas</label><input type="color" id="ep-banner-color" value="#2b2d31" style="width:100%;height:40px;padding:2px;"></div>' +
               '<div class="form-group"><label>Atau foto banner sendiri</label><input type="file" id="ep-banner-photo" accept="image/jpeg,image/png,image/gif,image/webp"></div>' +
             '</div>' +
-            '<div class="editpf-sect"><label>Profile Effect & Frame</label>' +
-              '<div class="editpf-disabled">Segera hadir — skip dulu (border belum dipikirkan).</div>' +
+            '<div class="editpf-sect"><label>Avatar Frame (gratis)</label>' +
+              '<div class="framerow" id="ep-frames">' +
+                [['', 'Tanpa frame', 'transparent'], ['white', 'Putih', '#FFFFFF'], ['gold', 'Emas', '#FFD700'], ['red', 'Merah', '#f23f43'], ['blue', 'Biru', '#3b9dff']].map(function (f) {
+                  return '<button type="button" class="framepick' + ((u.avatar_frame || '') === f[0] ? ' sel' : '') + '" data-v="' + f[0] + '" title="' + f[1] + '" style="border-color:' + f[2] + ';"><span>' + f[1] + '</span></button>';
+                }).join('') +
+              '</div>' +
             '</div>' +
             '<div class="editpf-sect"><label>Bio (maks 280)</label>' +
               '<textarea id="ep-bio" rows="3" maxlength="280" placeholder="Ceritakan tentangmu">' + esc(u.bio || '') + '</textarea>' +
@@ -252,7 +256,10 @@
     document.body.appendChild(overlay);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) closeEditProfile(); });
     document.getElementById('editpf-close').onclick = closeEditProfile;
-    document.getElementById('editpf-cancel').onclick = closeEditProfile;
+    // ID tombol Batal adalah ep-cancel (dulu salah tulis editpf-cancel → throw
+    // di sini mematikan SELURUH sisa init: preview, connections, Save ikut mati).
+    var epCancelBtn = document.getElementById('ep-cancel');
+    if (epCancelBtn) epCancelBtn.onclick = closeEditProfile;
 
     // connections editor
     var conns = {};
@@ -268,6 +275,7 @@
     var selNameplate = u.nameplate || '';
     var selAvatarFile = null;
     var selAvatarUrl = u.avatar_url || '';
+    var selFrame = u.avatar_frame || '';
 
     document.querySelectorAll('#ep-banners .pick').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -310,14 +318,17 @@
         var pr = BANNER_PRESETS.find(function (x) { return x.id === selBanner; }) || BANNER_PRESETS[0];
         bb.innerHTML = '<div class="profile-banner" style="background:' + pr.css + ';height:110px;"></div>';
       }
-      // avatar (GIF preview animasi otomatis via <img>)
+      // avatar (GIF preview animasi otomatis via <img>) + frame pilihan
+      var frameCls = selFrame ? ' avframe-' + selFrame : '';
+      var cur = document.getElementById('ep-avcur');
+      if (cur) cur.className = 'editpf-avcur' + frameCls;
       var pa = document.getElementById('ep-prev-avatar');
       if (selAvatarFile) {
-        pa.innerHTML = '<div class="editpf-avcur"><img src="' + URL.createObjectURL(selAvatarFile) + '" alt=""></div>';
+        pa.innerHTML = '<div class="editpf-avcur' + frameCls + '"><img src="' + URL.createObjectURL(selAvatarFile) + '" alt=""></div>';
       } else if (selAvatarUrl) {
-        pa.innerHTML = '<div class="editpf-avcur"><img src="' + esc(imgSrc(selAvatarUrl)) + '" alt=""></div>';
+        pa.innerHTML = '<div class="editpf-avcur' + frameCls + '"><img src="' + esc(imgSrc(selAvatarUrl)) + '" alt=""></div>';
       } else {
-        pa.innerHTML = '<div class="editpf-avcur">' + esc(dname.charAt(0).toUpperCase()) + '</div>';
+        pa.innerHTML = '<div class="editpf-avcur' + frameCls + '">' + esc(dname.charAt(0).toUpperCase()) + '</div>';
       }
       document.getElementById('ep-prev-name').textContent = dname;
       document.getElementById('ep-prev-sub').textContent = dname + (tag ? ' • ' + tag : '');
@@ -342,8 +353,25 @@
       var el = document.getElementById('ep-conn-' + k);
       if (el) el.addEventListener('input', refreshPreview);
     });
+    // Frame picker: ganti border avatar + live preview (dulu "Segera hadir" mati)
+    document.querySelectorAll('#ep-frames .framepick').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('#ep-frames .framepick').forEach(function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel');
+        selFrame = b.dataset.v;
+        refreshPreview();
+      });
+    });
+    // + Add Widget: antar ke editor Connections (dulu cuma alert mati)
     document.getElementById('ep-add-widget').onclick = function () {
-      alert('Widget = Connections. Isi username game di kiri, otomatis tampil di sini & di profilmu.');
+      var box = document.getElementById('ep-conns');
+      if (!box) return;
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      box.classList.remove('flash-focus');
+      void box.offsetWidth;
+      box.classList.add('flash-focus');
+      var first = box.querySelector('input');
+      if (first) setTimeout(function () { try { first.focus({ preventScroll: true }); } catch (_) { first.focus(); } }, 450);
     };
 
     document.getElementById('ep-np-change').onclick = function () {
@@ -390,7 +418,7 @@
           var v = (document.getElementById('ep-conn-' + k).value || '').trim();
           if (v) connections[k] = v;
         });
-        var payload = { username: username, bio: bio, status: status, server_tag: tag, connections: connections };
+        var payload = { username: username, bio: bio, status: status, server_tag: tag, connections: connections, avatar_frame: selFrame || null };
         // avatar
         if (selAvatarFile) {
           payload.avatar_url = await uploadImage(selAvatarFile);
@@ -506,14 +534,15 @@
       });
     }
     function renderPreview() {
-      var rows = '';
-      for (var i = 0; i < 4; i++) {
-        rows += '<div class="np-chatrow"><span class="dmsg-avatar sm">Z</span><span class="np-chatbar"></span></div>';
-      }
+      // Baris konteks di atas/bawah (dulu rows.slice(0,60) memotong STRING html
+      // di tengah tag → markup rusak).
+      var rowAbove = '<div class="np-chatrow"><span class="dmsg-avatar sm">Z</span><span class="np-chatbar"></span></div>';
+      var rowBelow = '<div class="np-chatrow"><span class="dmsg-avatar sm">Z</span><span class="np-chatbar"></span></div>';
       var meName = (me() && (me().username || 'Its Zazil')) || 'Its Zazil';
-      var hl = '<div class="np-chatrow hl"><span class="dmsg-avatar sm">' + (me() && me().avatar_url ? '<img src="' + esc(imgSrc(me().avatar_url)) + '">' : 'Z') + '</span>' +
+      var hasAv = !!(me() && me().avatar_url);
+      var hl = '<div class="np-chatrow hl"><span class="dmsg-avatar sm' + (hasAv ? ' has-photo' : '') + '">' + (hasAv ? '<img src="' + esc(imgSrc(me().avatar_url)) + '" alt="">' : 'Z') + '</span>' +
         '<span class="np-hl" style="' + nameplateStyle(sel) + '">' + esc(meName) + '</span></div>';
-      document.getElementById('np-chatpreview').innerHTML = rows.slice(0, 60) + hl + rows;
+      document.getElementById('np-chatpreview').innerHTML = rowAbove + hl + rowBelow;
       var meta = NAMEPLATE_PRESETS.find(function (x) { return x.id === sel; });
       document.getElementById('np-desc').innerHTML = sel === ''
         ? '<b>Tanpa nameplate</b><p>Tampilan nama polos.</p>'
