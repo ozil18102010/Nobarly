@@ -5,16 +5,13 @@
 // dari mana saja tanpa satu WiFi.
 // File ini WAJIB di-load pertama sebelum auth.js / db.js di semua halaman.
 var API_BASE_DEFAULT = 'http://localhost:5000/api';
-// === GANTI INI SETELAH DEPLOY (1x saja) ===
-// Aktif: tunnel publik sementara (dibuat otomatis 2026-09-12).
-// Kalau nanti pindah ke Render permanen, ganti ke:
-//   'https://nobarly-server.onrender.com/api'
-// lalu naikkan BAKED_SERVER_V +1 supaya HP teman otomatis ikut pindah.
-var PROD_SERVER = 'https://extract-dot-change-scholars.trycloudflare.com/api';
+// Server permanen (Railway, live 2026-09-15). Menggantikan tunnel sementara.
+// Semua HP otomatis pindah ke sini via BAKED_SERVER_V (tidak perlu setting manual).
+var PROD_SERVER = 'https://nobarly-server-production.up.railway.app/api';
 // Server bawaan untuk APK (di-bake saat build). Kalau URL produksi berubah,
 // naikkan BAKED_SERVER_V supaya setting lama di HP otomatis ikut update.
 var BAKED_NATIVE_SERVER = PROD_SERVER;
-var BAKED_SERVER_V = 6;
+var BAKED_SERVER_V = 7;
 var API_BASE = (function () {
   try {
     // Migrasi otomatis khusus aplikasi HP: tanpa ini user harus isi manual,
