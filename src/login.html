@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nobarly">
+  <meta name="description" content="Platform nonton streaming bareng (nobar) dan komunitas gamer">
+  <title>Nobarly - Masuk</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/fontawesome.min.css">
+  <script>try{if(localStorage.getItem('nobarly_theme')==='light')document.documentElement.classList.add('theme-light-pre');}catch(_){}</script>
+  <style>html.theme-light-pre body{background:#f5f5f5;}</style>
+  <style>
+    .auth-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .auth-card {
+      width: 420px;
+      max-width: 100%;
+      background: #0d0d0d;
+      border: 1px solid #333;
+      box-shadow: 6px 6px 0px #333;
+      padding: 32px;
+    }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-logo h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .auth-logo p {
+      color: #888;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .auth-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #b0b0b0;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .auth-tab.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+    .auth-error {
+      display: none;
+      background: #2a1212;
+      border: 1px solid #ff4444;
+      color: #ff8888;
+      font-size: 13px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
+    .auth-error.show { display: block; }
+    .auth-card .btn-primary { margin-top: 8px; }
+    .auth-hint {
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="title-bar">
+    <div class="title-bar-text"><span>Nobarly</span></div>
+  </div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <h1>Nobarly</h1>
+        <p>Nonton bareng & komunitas gamer</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" type="button">Masuk</button>
+        <button class="auth-tab" id="tab-register" type="button">Daftar</button>
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <!-- LOGIN -->
+      <form id="form-login">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="kamu@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" type="submit" id="btn-login">
+          <span class="btn-label">Masuk</span>
+        </button>
+      </form>
+
+      <!-- REGISTER -->
+      <form id="form-register" style="display:none;">
+        <div class="form-group">
+          <label for="reg-username">Username</label>
+          <input type="text" id="reg-username" placeholder="Contoh: gamerindo" required minlength="3" maxlength="50" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" placeholder="kamu@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password (min. 6 karakter)</label>
+          <input type="password" id="reg-password" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+        </div>
+        <button class="btn btn-primary" type="submit" id="btn-register">
+          <span class="btn-label">Buat Akun</span>
+        </button>
+      </form>
+
+      <p class="auth-hint">Akun tersimpan di database Nobarly (tabel <b>profiles</b>).</p>
+      <p class="auth-hint" id="app-version-login" style="margin-top:4px;"></p>
+
+      <details id="server-settings" style="margin-top:16px;border:1px solid #333;padding:10px 12px;">
+        <summary style="cursor:pointer;font-size:12px;color:#888;">Pengaturan server (opsional / darurat)</summary>
+        <div style="margin-top:10px;">
+          <div class="form-group" style="margin-bottom:10px;">
+            <label for="server-url">URL API backend</label>
+            <input type="text" id="server-url" placeholder="https://nobarly-server.onrender.com/api" inputmode="url" autocomplete="url">
+          </div>
+          <button class="btn btn-secondary" type="button" id="btn-save-server" style="width:100%;">Simpan Server</button>
+          <p class="auth-hint" id="server-current" style="margin-top:8px;"></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script src="js/version.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/bugreport.js"></script>
+  <script>
+    // Pengaturan server manual untuk HP/APK (tanpa rebuild).
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        var v = window.NOBARLY_VERSION || (typeof NOBARLY_VERSION !== 'undefined' ? NOBARLY_VERSION : null);
+        if (v) document.getElementById('app-version-login').textContent = 'Nobarly v' + v;
+      } catch (_) {}
+      var input = document.getElementById('server-url');
+      var cur = document.getElementById('server-current');
+      function refresh() {
+        var base = (window.NobarlyConfig ? window.NobarlyConfig.getApiBase() : window.API_BASE);
+        if (input && !input.value) input.value = base;
+        if (cur) cur.textContent = 'Aktif: ' + base;
+      }
+      refresh();
+      document.getElementById('btn-save-server').addEventListener('click', function () {
+        var v = (input.value || '').trim();
+        if (!v) { alert('Isi URL API dulu.'); return; }
+        if (!/^https?:\/\//i.test(v)) v = 'http://' + v;
+        var base = window.NobarlyConfig.setApiBase(v);
+        // Sinkron juga ke var global auth.js
+        try { API_BASE = base; } catch (_) {}
+        refresh();
+        alert('Server disimpan: ' + base);
+      });
+    });
+  </script>
+</body>
+</html>

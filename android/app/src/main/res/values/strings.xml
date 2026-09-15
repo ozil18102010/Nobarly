@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nobarly</string>
+    <string name="title_activity_main">Nobarly</string>
+    <string name="package_name">com.nobarly.app</string>
+    <string name="custom_url_scheme">com.nobarly.app</string>
+</resources>

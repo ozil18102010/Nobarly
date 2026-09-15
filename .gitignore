@@ -1,0 +1,28 @@
+# Deps
+node_modules/
+server/node_modules/
+
+# Env (JANGAN push password asli)
+.env
+
+# Uploads lokal (di hosting pakai disk / S3, bukan repo)
+uploads/*
+!uploads/.gitkeep
+
+# Build Android
+*.apk
+*.aab
+android/.gradle/
+android/app/build/
+android/build/
+
+# Electron
+dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log

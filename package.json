@@ -1,0 +1,26 @@
+{
+  "name": "nobarly",
+  "version": "2.10.0",
+  "description": "Platform nonton streaming bareng (nobar) dan komunitas gamer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "install-deps": "npm install",
+    "install-server": "npm install --prefix server",
+    "server": "node server/server.js",
+    "dev": "npm run server & electron .",
+    "cap:sync": "npx cap sync",
+    "cap:open": "npx cap open android",
+    "apk:debug": "npx cap sync android && npx cap open android",
+    "apk:build": "./scripts/build-apk.sh"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.2",
+    "@capacitor/cli": "^6.2.2",
+    "@capacitor/core": "^6.2.2",
+    "peerjs": "^1.5.5"
+  },
+  "devDependencies": {
+    "electron": "^33.3.1"
+  }
+}

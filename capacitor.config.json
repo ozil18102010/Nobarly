@@ -1,0 +1,13 @@
+{
+  "appId": "com.nobarly.app",
+  "appName": "Nobarly",
+  "webDir": "src",
+  "backgroundColor": "#000000",
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "cleartext": true,
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,84 @@
+/* Nobarly social: Colek (nudge) + Poll cepat. Aktif di laptop & HP. */
+
+/* --- Colek --- */
+.nudge-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2b1a00, #1a1a1a);
+  border: 1px solid #ffaa00;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #ffd97a;
+  animation: nudge-wiggle 0.5s ease 2;
+}
+.nudge-hand { font-size: 20px; animation: nudge-hand 0.5s ease 3; }
+@keyframes nudge-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-2deg) translateX(-3px); }
+  75% { transform: rotate(2deg) translateX(3px); }
+}
+@keyframes nudge-hand {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+/* Layar ikut goyang sekali saat dicolek (dicabut otomatis oleh JS) */
+body.nudge-shake { animation: nudge-screen 0.55s ease; }
+@keyframes nudge-screen {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
+/* --- Poll --- */
+.poll-card {
+  background: #141414;
+  border: 1px solid #3a3a3a;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 4px 0;
+  min-width: min(280px, 60vw);
+}
+.poll-q { font-weight: 800; font-size: 14px; margin-bottom: 8px; }
+.poll-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  padding: 7px 10px;
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+.poll-opt:active { transform: scale(0.98); background: #2a2a2a; }
+.poll-emoji { font-size: 16px; }
+.poll-bar { height: 6px; background: #262626; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.poll-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ffaa00, #ff5500);
+  transition: width 0.4s ease;
+}
+.poll-total { font-size: 12px; color: #888; margin-top: 8px; }
+.poll-hint { color: #ffb84d !important; }
+
+/* Tombol ekstra composer (colek + poll) */
+.chat-extra-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 17px;
+  cursor: pointer;
+  padding: 6px;
+  flex-shrink: 0;
+}
+.chat-extra-btn:hover { color: #fff; }

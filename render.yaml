@@ -1,0 +1,39 @@
+# Nobarly — siap deploy online gratis (Render.com)
+# Cara pakai: push repo ke GitHub → Render → New → Blueprint → pilih repo ini.
+services:
+  - type: web
+    name: nobarly-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SERVER_PORT
+        value: 5000
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: nobarly
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_VERSION
+        value: 2.10.0
+      # Isi setelah APK diupload (mis. link GitHub Release), biar user dapat notif update
+      - key: APK_URL
+        sync: false
+      # Cloudinary (gambar permanen — tanpa ini upload hilang tiap restart).
+      # Daftar gratis di cloudinary.com → Dashboard → salin 3 nilai ini.
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

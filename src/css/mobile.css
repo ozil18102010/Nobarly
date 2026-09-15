@@ -1,0 +1,515 @@
+/* Nobarly mobile / PWA / APK overrides.
+   Desktop (Electron) tidak berubah. Baru aktif di layar kecil. */
+
+/* Sembunyikan title-bar Electron di browser / HP / PWA */
+@media (max-width: 767px) {
+  .title-bar {
+    display: none;
+  }
+}
+
+/* APK/tablet lebar: title-bar Electron tetap wajib hilang kalau native.
+   Kelas .is-native dipasang mobile-nav.js saat Capacitor terdeteksi. */
+body.is-native .title-bar,
+body.is-capacitor .title-bar {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    overflow: auto;
+    height: 100dvh;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Layout utama jadi kolom: sidebar jadi drawer */
+  .dashboard-container {
+    flex-direction: column;
+    position: relative;
+    height: 100dvh;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 900;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(84vw, 300px);
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 8px 0 24px rgba(0,0,0,0.5);
+  }
+
+  body.nav-open .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Backdrop saat drawer terbuka */
+  body.nav-open .main-content::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 800;
+  }
+
+  /* Tombol hamburger disuntik via JS (mobile-nav.js). Default sembunyi di desktop. */
+  .mobile-nav-btn {
+    display: inline-flex !important;
+  }
+
+  .main-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .content-header {
+    padding: 12px 14px;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    background: #0a0a0a;
+    z-index: 50;
+  }
+
+  .content-header h2 {
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #header-actions .btn {
+    padding: 10px 12px;
+    font-size: 13px;
+    width: auto;
+  }
+
+  /* Userbar akun JANGAN di dalam halaman Pesan (minta user: pisah kayak laptop).
+     Akun diakses via avatar rel bawah → modal Profil (ada Lapor Bug + Keluar). */
+  .dmsg-userbar {
+    display: none;
+  }
+
+  .content-body {
+    padding: 14px;
+    padding-bottom: 90px; /* ruang bottom-nav */
+  }
+
+  /* ===== Rel server kiri ala Discord ===== */
+  .server-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    z-index: 700;
+    background: #0a0a0a;
+    border-right: 1px solid #222;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .rail-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 0;
+    border: 1px solid #333333;
+    background: #1c1c1c;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rail-btn.active {
+    background: #FFFFFF;
+    color: #000000;
+    border-color: #FFFFFF;
+  }
+  /* Tombol lapor selalu terlihat (minta user: di HP tidak ada tempat lapor) */
+  .rail-bug {
+    background: #fff;
+    color: #000;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+  .rail-sep {
+    width: 28px;
+    height: 2px;
+    background: #2a2a2a;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  .rail-comms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    overflow-y: auto;
+  }
+  .rail-empty { color: #444; font-size: 18px; }
+  /* Geser konten + bottom-nav selebar rel */
+  .dashboard-container {
+    margin-left: 60px;
+  }
+  .mobile-bottom-nav {
+    left: 60px;
+  }
+
+  /* Channel sidebar jadi overlay full */
+  .channel-sidebar {
+    position: fixed !important;
+    z-index: 850;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(88vw, 320px);
+    background: #0a0a0a;
+    border-right: 1px solid #333;
+    box-shadow: 8px 0 24px rgba(0,0,0,0.5);
+  }
+
+  /* Grid 1 kolom di HP */
+  .community-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal full-screen di HP */
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    width: 100% !important;
+    max-height: 92dvh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  /* Form lebih nyaman disentuh */
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .chat-composer input[type="text"],
+  .comment-form input {
+    font-size: 16px; /* cegah auto-zoom iOS, berlaku juga di Android */
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  .sidebar-item {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Chat channel muat di layar HP (header sticky + bottom nav) */
+  .chat-wrap {
+    height: calc(100dvh - 270px);
+    min-height: 280px;
+  }
+
+  .chat-composer {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  /* Video / iframe nobar responsif */
+  .watch-video-wrap iframe,
+  .watch-video-wrap video,
+  iframe[src*="youtube"],
+  iframe[src*="twitch"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .post-upload-preview {
+    max-width: 100%;
+  }
+}
+
+/* Bottom navigation khusus HP (disuntik via JS) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 950;
+    background: #0a0a0a;
+    border-top: 1px solid #333;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 2px;
+    cursor: pointer;
+    min-height: 52px;
+  }
+
+  .mobile-bottom-nav button i {
+    font-size: 17px;
+  }
+
+  .mobile-bottom-nav button.active {
+    color: #fff;
+  }
+
+  .mobile-nav-btn {
+    align-items: center;
+    justify-content: center;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 0;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    cursor: pointer;
+    font-size: 16px;
+  }
+}
+
+/* Desktop: sembunyikan tombol/ nav mobile */
+@media (min-width: 768px) {
+  .mobile-nav-btn,
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* ===== ANTI-KEPOTONG HP: tombol full-width jangan meniban barisnya ===== */
+@media (max-width: 767px) {
+  /* Header: bungkus tombol aksi, jangan overflow */
+  .content-header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .content-header h2 {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  #header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #header-actions .btn {
+    flex-shrink: 0;
+    width: auto;
+  }
+
+  /* .btn-primary default width:100% — dalam baris flex harus auto */
+  .modal-footer {
+    flex-wrap: wrap;
+  }
+
+  .modal-footer .btn-primary {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .chat-composer .btn-primary,
+  .watch-chat-input-area .btn-primary {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .cohost-add .btn {
+    flex-shrink: 0;
+  }
+
+  /* Input flex HARUS min-width:0 supaya mengecil, bukan mendorong tombol keluar layar */
+  .chat-composer input[type="text"],
+  .watch-chat-input-area input[type="text"],
+  .comment-form input,
+  .cohost-add input {
+    min-width: 0;
+  }
+
+  .chat-msg-body,
+  .friend-name,
+  .watch-player-main {
+    min-width: 0;
+  }
+
+  /* Layout berdampingan jadi bertumpuk */
+  .watch-player-layout {
+    flex-direction: column;
+  }
+
+  .watch-chat-panel {
+    width: 100%;
+    border-left: none;
+    border-top: 2px solid #333;
+    min-height: 320px;
+    max-height: 62dvh;
+  }
+
+  .dm-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .dm-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #333;
+    max-height: 38dvh;
+  }
+
+  .dm-main {
+    min-height: 52dvh;
+  }
+
+  .timeline-layout {
+    flex-direction: column;
+  }
+
+  .timeline-side {
+    width: 100%;
+    position: static;
+  }
+
+  .debate-sides {
+    grid-template-columns: 1fr;
+  }
+
+  .debate-vs {
+    justify-content: center;
+    padding: 2px 0;
+  }
+
+  /* Toolbar kartu: bungkus, jangan terpotong */
+  .sort-toolbar,
+  .post-actions,
+  .community-card-meta,
+  .esports-card-actions,
+  .debate-side-actions,
+  .party-reaction-bar {
+    flex-wrap: wrap;
+  }
+
+  /* Voice room + nobar create bertumpuk rapi di HP */
+  .nobar-create-wrap {
+    flex-direction: column;
+  }
+
+  .nobar-create-card {
+    max-width: none;
+  }
+
+  .nobar-side {
+    width: 100%;
+  }
+
+  .voice-room-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-auto-rows: minmax(220px, auto);
+  }
+
+  .voice-room-bar .btn {
+    min-width: 0;
+  }
+
+  .soundboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .voice-party-head b {
+    flex-basis: 100%;
+  }
+}
+
+/* ===== Voice bottom toolbar + soundboard bottom-sheet (mobile) ===== */
+@media (max-width: 767px) {
+  .vroom-controls, .vroom-joinbar {
+    position: sticky;
+    bottom: 8px;
+    z-index: 20;
+  }
+  #voice-float-mount .soundboard-box {
+    display: none;
+    position: fixed;
+    left: 60px;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    transform: translateY(105%);
+    width: auto;
+    max-height: 46dvh;
+    overflow-y: auto;
+    z-index: 900;
+    background: #000000;
+    border-top: 2px solid #FFFFFF;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: none;
+    transition: transform 0.22s ease;
+  }
+  #voice-float-mount.float-show .soundboard-box.float-open {
+    display: block;
+    transform: translateY(0);
+  }
+}
+
+/* Mini-profile bar di atas bottom nav (mobile saja) */
+.mini-profile {
+  display: none;
+}
+@media (max-width: 767px) {
+  .mini-profile {
+    display: flex;
+    position: fixed;
+    left: 60px;
+    right: 0;
+    bottom: 76px;
+    z-index: 940;
+  }
+  .content-body {
+    padding-bottom: 170px;
+  }
+}
