@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   renderPage('communities');
   updateMyCommunitiesSidebar();
+  // Intro pengenalan (sekali per versi) — biar user baru & lama kenal fitur nobar
+  try { if (typeof maybeShowOnboarding === 'function') maybeShowOnboarding(); } catch (_) {}
 });
 
 function setupNavigation() {
@@ -152,6 +154,11 @@ function renderPage(page) {
     case 'settings':
       title.textContent = 'Settings';
       if (typeof loadSettingsPage === 'function') loadSettingsPage();
+      break;
+
+    case 'about':
+      title.textContent = 'Tentang Nobarly';
+      if (typeof loadAboutPage === 'function') loadAboutPage();
       break;
 
     // Deprecated (menu dihapus, APK gratis): arahkan ke Customize biar cache lama tidak blank

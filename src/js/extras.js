@@ -131,8 +131,11 @@ function loadSettingsPage() {
       <div class="set-row" id="set-bug">
         <i class="fas fa-bug"></i><b>Lapor Bug</b><span>›</span>
       </div>
+      <div class="set-row" id="set-about">
+        <i class="fas fa-info-circle"></i><b>Tentang Nobarly</b><span>fitur • cara nobar • versi ›</span>
+      </div>
       <div class="set-row">
-        <i class="fas fa-info-circle"></i><b>Versi</b><span>Nobarly v${escapeHtml(ver)} • gratis, tanpa Nitro</span>
+        <i class="fas fa-tag"></i><b>Versi</b><span>Nobarly v${escapeHtml(ver)} • gratis, tanpa Nitro</span>
       </div>
       <div class="set-row" id="set-update">
         <i class="fas fa-arrow-circle-up"></i><b>Cek Update</b><span>lihat versi + changelog ›</span>
@@ -158,6 +161,9 @@ function loadSettingsPage() {
   });
   document.getElementById('set-bug').addEventListener('click', () => {
     if (typeof openBugReportModal === 'function') openBugReportModal();
+  });
+  document.getElementById('set-about').addEventListener('click', () => {
+    if (typeof renderPage === 'function') renderPage('about');
   });
   document.getElementById('set-update').addEventListener('click', async () => {
     try {
