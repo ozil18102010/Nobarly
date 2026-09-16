@@ -1,7 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
 const pool = require('../config');
 
 const router = express.Router();
@@ -37,57 +36,14 @@ function publicUser(row) {
   };
 }
 
-// POST /api/auth/register { username, email, password }
+// POST /api/auth/register — DIMATIKAN permanen (wajib akun asli via Google/GitHub).
+// Akun lama (email+password) tetap bisa login lewat /login.
 router.post('/register', async (req, res) => {
-  let conn;
-  try {
-    const { username, email, password } = req.body || {};
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ data: null, error: { message: 'username, email, dan password wajib diisi' } });
-    }
-    if (String(username).trim().length < 3) {
-      return res.status(400).json({ data: null, error: { message: 'username minimal 3 karakter' } });
-    }
-    if (String(password).length < 6) {
-      return res.status(400).json({ data: null, error: { message: 'password minimal 6 karakter' } });
-    }
-    const cleanEmail = String(email).trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-      return res.status(400).json({ data: null, error: { message: 'format email tidak valid' } });
-    }
-    const cleanUsername = String(username).trim();
-
-    conn = await pool.getConnection();
-
-    const existing = await conn.query(
-      'SELECT id FROM profiles WHERE email = ? OR username = ? LIMIT 1',
-      [cleanEmail, cleanUsername]
-    );
-    if (existing.length > 0) {
-      return res.status(409).json({ data: null, error: { message: 'email atau username sudah dipakai', code: '23505' } });
-    }
-
-    const passwordHash = await bcrypt.hash(String(password), 10);
-    const userId = uuidv4();
-    await conn.query(
-      'INSERT INTO profiles (id, username, email, password_hash) VALUES (?, ?, ?, ?)',
-      [userId, cleanUsername, cleanEmail, passwordHash]
-    );
-    const rows = await conn.query('SELECT * FROM profiles WHERE id = ?', [userId]);
-    const user = publicUser(rows[0]);
-    const token = signToken(user);
-    res.json({ data: { token, user }, error: null });
-  } catch (e) {
-    if (e.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ data: null, error: { message: 'email atau username sudah dipakai', code: '23505' } });
-    }
-    res.status(500).json({ data: null, error: { message: e.message } });
-  } finally {
-    if (conn) conn.release();
-  }
+  return res.status(410).json({
+    data: null,
+    error: { message: 'Pendaftaran manual dimatikan. Masuk dengan Google atau GitHub.' },
+  });
 });
-
 // POST /api/auth/login { email, password }
 router.post('/login', async (req, res) => {
   let conn;

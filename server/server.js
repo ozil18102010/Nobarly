@@ -29,7 +29,7 @@ const app = express();
 // .env.example, dan semua docs — tanpa .env pun langsung nyambung.
 const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 // Versi app — tampil di APK + endpoint /api/version biar ketahuan teman pakai versi mana.
-const APP_VERSION = process.env.APP_VERSION || '2.13.0';
+const APP_VERSION = process.env.APP_VERSION || '2.14.0';
 
 app.use(cors());
 app.use(express.json());
