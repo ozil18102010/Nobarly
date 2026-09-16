@@ -164,7 +164,9 @@ async function exchangeGoogle(c, code, redirectUri) {
     }),
   });
   const tok = await res.json();
-  if (!tok.id_token) throw new Error('Google: gagal tukar code.');
+  if (!tok.id_token) {
+    throw new Error(`Google: gagal tukar code (${tok.error || 'tanpa id_token'}${tok.error_description ? ' — ' + tok.error_description : ''}).`);
+  }
   const v = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(tok.id_token)}`);
   const info = await v.json();
   if (!info.sub || info.aud !== c.id) throw new Error('Google: token tidak valid.');
@@ -274,6 +276,8 @@ router.get('/:provider/callback', async (req, res) => {
     }
     return res.redirect(`nobarly://auth?token=${encodeURIComponent(token)}&provider=${encodeURIComponent(name)}`);
   } catch (e) {
+    // Log server (tanpa secret) agar bisa didiagnosis dari Railway
+    try { console.error(`[oauth:${name}] ${e.message}`); } catch (_) {}
     return fail(e.message);
   } finally {
     if (conn) conn.release();
