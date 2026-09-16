@@ -57,6 +57,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'Nobarly',
+    icon: path.join(__dirname, 'Icon.png'),
     backgroundColor: '#000000',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
