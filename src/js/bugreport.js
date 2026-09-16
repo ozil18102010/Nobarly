@@ -160,7 +160,7 @@ function openBugReportModal(prefillMessage) {
 
 // Cek update: bandingkan versi APK vs versi server → floating modal.
 // Isi modal: versi baru, versi kamu, changelog (dari UPDATE_MESSAGE server),
-// tombol "Update" (buka apk_url di APK) + "Nanti" (snooze 24 jam per versi).
+// tombol "Update" (download + install LANGSUNG di APK) + "Nanti" (snooze 24 jam).
 function _isNewerVer(serverVer, localVer) {
   try {
     const pa = String(serverVer).trim().split('.').map((x) => parseInt(x, 10) || 0);
@@ -200,8 +200,12 @@ function showUpdateModal(serverVer, localVer, changelog, apkUrl) {
       <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;">
         <button class="btn btn-secondary" id="update-later" style="width:auto;">Nanti</button>
         ${apkUrl
-          ? `<a class="btn btn-primary" id="update-now" style="width:auto;text-decoration:none;text-align:center;" href="${apkUrl}" target="_blank" rel="noopener">Update</a>`
+          ? `<button class="btn btn-primary" id="update-now" style="width:auto;">Update</button>`
           : `<button class="btn btn-primary" id="update-now" style="width:auto;">OK</button>`}
+      </div>
+      <div class="update-progress" id="update-progress" style="display:none;">
+        <div class="update-bar"><div class="update-fill" id="update-fill"></div></div>
+        <p id="update-status">Menyiapkan...</p>
       </div>
     </div>`;
   document.body.appendChild(overlay);
@@ -211,10 +215,81 @@ function showUpdateModal(serverVer, localVer, changelog, apkUrl) {
     } catch (_) {}
     try { overlay.remove(); } catch (_) {}
   };
+  const setStatus = (msg, pct) => {
+    const box = document.getElementById('update-progress');
+    const fill = document.getElementById('update-fill');
+    const st = document.getElementById('update-status');
+    if (box) box.style.display = 'block';
+    if (fill && pct != null) fill.style.width = pct + '%';
+    if (st && msg) st.textContent = msg;
+  };
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(true); });
   document.getElementById('update-later').onclick = () => close(true);
   const nowBtn = document.getElementById('update-now');
-  if (nowBtn && !apkUrl) nowBtn.onclick = () => close(true);
+  if (nowBtn && !apkUrl) {
+    nowBtn.onclick = () => close(true);
+  } else if (nowBtn && apkUrl) {
+    nowBtn.onclick = () => _downloadAndInstall(apkUrl, serverVer, nowBtn, setStatus);
+  }
+}
+
+// Download APK ke cache lalu buka installer sistem — semua di dalam APK.
+// (Custom Tab browser tidak bisa menyelesaikan download file.)
+async function _downloadAndInstall(apkUrl, serverVer, btn, setStatus) {
+  const Plugs = (window.Capacitor && window.Capacitor.Plugins) || {};
+  const isNative = (() => {
+    try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
+    catch (_) { return false; }
+  })();
+  // Web / plugin belum ada → fallback buka browser
+  if (!isNative || !Plugs.Filesystem || !Plugs.FileOpener) {
+    try {
+      if (Plugs.Browser && Plugs.Browser.open) { Plugs.Browser.open({ url: apkUrl }); return; }
+    } catch (_) {}
+    window.open(apkUrl, '_blank');
+    return;
+  }
+  try { btn.disabled = true; } catch (_) {}
+  const fileName = 'nobarly-v' + String(serverVer).replace(/[^0-9a-zA-Z.]/g, '') + '.apk';
+  try {
+    setStatus('⬇️ Mengunduh update... jangan tutup app.', 15);
+    const dl = await Plugs.Filesystem.downloadFile({
+      url: apkUrl,
+      directory: 'CACHE',
+      path: fileName,
+    });
+    const filePath = (dl && dl.path) || fileName;
+    setStatus('📦 Membuka installer... ketuk Install di layar berikutnya.', 90);
+    await Plugs.FileOpener.open({
+      path: filePath,
+      mimeType: 'application/vnd.android.package-archive',
+    });
+    setStatus('✅ Lanjut di layar install sistem.', 100);
+  } catch (e) {
+    setStatus('❌ Gagal: ' + (e && e.message ? e.message : 'download error') + '. Coba lagi / Nanti.', 0);
+    try { btn.disabled = false; } catch (_) {}
+    // Fallback: buka di browser biar user tetap bisa update manual
+    try {
+      const fb = document.getElementById('update-browser');
+      if (!fb) {
+        const foot = document.querySelector('#update-overlay .modal-footer');
+        if (foot) {
+          const a = document.createElement('button');
+          a.id = 'update-browser';
+          a.className = 'btn btn-secondary';
+          a.style.width = 'auto';
+          a.textContent = 'Buka di Browser';
+          a.onclick = () => {
+            try {
+              if (Plugs.Browser && Plugs.Browser.open) Plugs.Browser.open({ url: apkUrl });
+              else window.open(apkUrl, '_blank');
+            } catch (_) { window.open(apkUrl, '_blank'); }
+          };
+          foot.prepend(a);
+        }
+      }
+    } catch (_) {}
+  }
 }
 
 async function checkAppUpdate(force) {

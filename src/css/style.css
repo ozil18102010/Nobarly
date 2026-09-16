@@ -539,6 +539,21 @@ a:hover {
   overflow-y: auto;
   white-space: pre-line;
 }
+.update-progress { padding: 0 24px 16px; }
+.update-bar {
+  height: 8px;
+  background: #111214;
+  border: 1px solid #2b2d31;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.update-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  transition: width 0.3s ease;
+}
+.update-progress p { font-size: 12px; color: #b0b0b0; margin: 8px 0 0; }
 
 /* ===== ONBOARDING (pengenalan Nobar, sekali per versi) ===== */
 .onboard-overlay {
