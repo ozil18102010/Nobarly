@@ -55,14 +55,8 @@ async function apiAuth(path, body) {
   return res.json();
 }
 
-function switchTab(mode) {
-  const isLogin = mode === 'login';
-  document.getElementById('tab-login').classList.toggle('active', isLogin);
-  document.getElementById('tab-register').classList.toggle('active', !isLogin);
-  document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
-  document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
-  showError(null);
-}
+// switchTab dipertahankan sebagai no-op aman (tab Masuk/Daftar dihapus dari login.html).
+function switchTab(mode) { showError(null); }
 
 function setLoading(btnId, loading, label) {
   const btn = document.getElementById(btnId);
@@ -77,13 +71,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Guard semua elemen: di dashboard tidak ada tab/form login,
   // dan redirect otomatis hanya boleh jalan di halaman login
   // (tanpa guard ini: crash null + reload-loop dashboard).
-  const tabLogin = document.getElementById('tab-login');
-  const tabRegister = document.getElementById('tab-register');
   const formLogin = document.getElementById('form-login');
-  const formRegister = document.getElementById('form-register');
-  const isAuthPage = !!(formLogin || tabLogin);
-  if (tabLogin) tabLogin.addEventListener('click', () => switchTab('login'));
-  if (tabRegister) tabRegister.addEventListener('click', () => switchTab('register'));
+  const isAuthPage = !!formLogin;
   if (!isAuthPage) return; // dashboard: dashboard.js yang atur via requireAuth()
   // Di HP: pastikan server terkonfigurasi dulu (overlay kalau belum)
   if (typeof ensureServerConfigured === 'function' && !ensureServerConfigured()) return;
@@ -135,39 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  if (formRegister) formRegister.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    showError(null);
-    const username = document.getElementById('reg-username').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    if (!username || !email || !password) {
-      showError('Semua field wajib diisi.');
-      return;
-    }
-    if (username.length < 3) {
-      showError('Username minimal 3 karakter.');
-      return;
-    }
-    if (password.length < 6) {
-      showError('Password minimal 6 karakter.');
-      return;
-    }
-    setLoading('btn-register', true);
-    try {
-      const { data, error } = await apiAuth('/auth/register', { username, email, password });
-      if (error) {
-        showError(error.message || 'Gagal daftar.');
-        return;
-      }
-      saveSession(data.token, data.user);
-      goDashboard();
-    } catch (err) {
-      showError('Tidak bisa menghubungi server. Pastikan backend jalan (npm run server).');
-    } finally {
-      setLoading('btn-register', false, 'Buat Akun');
-    }
-  });
+  // (Form daftar dihapus — pendaftaran manual dimatikan server.)
 });
 
 // Dipakai dashboard.html

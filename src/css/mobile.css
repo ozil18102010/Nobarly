@@ -157,12 +157,9 @@ body.is-capacitor .title-bar {
     overflow-y: auto;
   }
   .rail-empty { color: #444; font-size: 18px; }
-  /* Geser konten + bottom-nav selebar rel */
+  /* Geser konten selebar rel */
   .dashboard-container {
     margin-left: 60px;
-  }
-  .mobile-bottom-nav {
-    left: 60px;
   }
 
   /* Channel sidebar jadi overlay full */
@@ -221,9 +218,9 @@ body.is-capacitor .title-bar {
     font-size: 14px;
   }
 
-  /* Chat channel muat di layar HP (header sticky + bottom nav) */
+  /* Chat channel muat di layar HP (header sticky) */
   .chat-wrap {
-    height: calc(100dvh - 270px);
+    height: calc(100dvh - 140px);
     min-height: 280px;
   }
 
@@ -252,48 +249,9 @@ body.is-capacitor .title-bar {
   }
 }
 
-/* Bottom navigation khusus HP (disuntik via JS) */
-.mobile-bottom-nav {
-  display: none;
-}
+/* (Bottom navigation + mini-profile DIHAPUS permanen — navigasi via drawer & rel) */
 
 @media (max-width: 767px) {
-  .mobile-bottom-nav {
-    display: flex;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 950;
-    background: #0a0a0a;
-    border-top: 1px solid #333;
-    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
-  }
-
-  .mobile-bottom-nav button {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #b0b0b0;
-    font-size: 10px;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 8px 2px;
-    cursor: pointer;
-    min-height: 52px;
-  }
-
-  .mobile-bottom-nav button i {
-    font-size: 17px;
-  }
-
-  .mobile-bottom-nav button.active {
-    color: #fff;
-  }
-
   .mobile-nav-btn {
     align-items: center;
     justify-content: center;
@@ -309,10 +267,9 @@ body.is-capacitor .title-bar {
   }
 }
 
-/* Desktop: sembunyikan tombol/ nav mobile */
+/* Desktop: sembunyikan tombol nav mobile */
 @media (min-width: 768px) {
-  .mobile-nav-btn,
-  .mobile-bottom-nav {
+  .mobile-nav-btn {
     display: none !important;
   }
 }
@@ -497,19 +454,9 @@ body.is-capacitor .title-bar {
 }
 
 /* Mini-profile bar di atas bottom nav (mobile saja) */
-.mini-profile {
-  display: none;
-}
+/* (mini-profile bar DIHAPUS — ruang bawah dikembalikan ke konten) */
 @media (max-width: 767px) {
-  .mini-profile {
-    display: flex;
-    position: fixed;
-    left: 60px;
-    right: 0;
-    bottom: 76px;
-    z-index: 940;
-  }
   .content-body {
-    padding-bottom: 170px;
+    padding-bottom: 24px;
   }
 }

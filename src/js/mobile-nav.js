@@ -1,4 +1,6 @@
-// Navigasi mobile: hamburger + bottom nav + drawer.
+// Navigasi mobile: hamburger (drawer) + rel server kiri ala Discord.
+// Bottom bar + mini-profile DIHAPUS (biar lega, tidak keramaian):
+// semua menu tetap 1-2 tap via hamburger/drawer dan rel server.
 // Desktop tidak terpengaruh (CSS menyembunyikan elemen ini di >768px).
 (function () {
   function isMobile() {
@@ -106,51 +108,7 @@
         box.innerHTML = html || '<div class="rail-empty">•</div>';
       } catch (_) { /* rel opsional, jangan ganggu app */ }
     }
-    if (!document.querySelector('.mobile-bottom-nav')) {
-      var nav = document.createElement('nav');
-      nav.className = 'mobile-bottom-nav';
-      nav.id = 'mobile-bottom-nav';
-      // Parity laptop→Android: fitur utama wajib 1 tap (dulu cuma 2 item,
-      // user mobile wajib buka drawer untuk nobar/DM/komunitas).
-      var items = [
-        { page: 'communities', icon: 'fa-users', label: 'Komunitas' },
-        { page: 'nobar', icon: 'fa-tv', label: 'Nobar' },
-        { page: 'dm', icon: 'fa-envelope', label: 'Pesan' },
-        { page: 'customize', icon: 'fa-palette', label: 'Gaya' },
-        { page: 'settings', icon: 'fa-cog', label: 'Atur' }
-      ];
-      items.forEach(function (it) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.dataset.page = it.page;
-        b.innerHTML = '<i class="fas ' + it.icon + '"></i><span>' + it.label + '</span>';
-        b.addEventListener('click', function () {
-          closeNav();
-          // Pakai alur navigasi bawaan dashboard bila ada
-          var sideItem = document.querySelector('.sidebar-item[data-page="' + it.page + '"]');
-          if (sideItem) sideItem.click();
-          else if (typeof renderPage === 'function') renderPage(it.page);
-          markActive(it.page);
-        });
-        nav.appendChild(b);
-      });
-      document.body.appendChild(nav);
-      markActive('communities');
-    }
-
-    // 2b. Mini-profile bar di atas bottom nav (tap → halaman profil)
-    if (!document.getElementById('mini-profile')) {
-      var mp = document.createElement('div');
-      mp.className = 'mini-profile';
-      mp.id = 'mini-profile';
-      mp.innerHTML = '<div class="dmsg-avatar" id="mini-avatar">?</div>' +
-        '<div class="dmsg-me"><b id="mini-name">...</b><span id="mini-status">Online</span></div>' +
-        '<i class="fas fa-chevron-up" style="color:#888;"></i>';
-      mp.addEventListener('click', function () {
-        if (typeof openProfile === 'function') openProfile();
-      });
-      document.body.appendChild(mp);
-    }
+    // (Bottom nav + mini-profile dihapus permanen — navigasi via drawer & rel.)
 
     // 3. Tutup drawer saat item sidebar diklik (delegasi: mencakup juga
     // item komunitas dinamis #my-communities yang baru muncul belakangan).
@@ -177,38 +135,18 @@
     });
 
     function markActive(page) {
-      document.querySelectorAll('.mobile-bottom-nav button').forEach(function (b) {
-        b.classList.toggle('active', b.dataset.page === page);
-      });
+      // Bottom nav dihapus — tinggal tandai judul (dipakai drawer).
       if (title) title.dataset.page = page;
     }
 
     // Expose untuk modul lain
-    window.NobarlyMobile = { closeNav: closeNav, isMobile: isMobile, refreshRail: refreshServerRail, refreshMini: refreshMiniProfile };
+    window.NobarlyMobile = { closeNav: closeNav, isMobile: isMobile, refreshRail: refreshServerRail, refreshMini: function () {} };
     window.refreshServerRail = refreshServerRail;
     window.markRail = markRail;
 
-    // Isi mini-profile (dipanggil dashboard setelah login + tiap profil berubah)
-    function refreshMiniProfile() {
-      try {
-        if (typeof currentUser === 'undefined' || !currentUser) return;
-        const av = document.getElementById('mini-avatar');
-        const nm = document.getElementById('mini-name');
-        const st = document.getElementById('mini-status');
-        if (!av || !nm) return;
-        const name = currentUser.username || currentUser.email || 'User';
-        nm.textContent = name;
-        const pst = presenceOf(currentUser.status, new Date().toISOString());
-        const tmp = document.createElement('div');
-        tmp.innerHTML = avatarHtml(name, currentUser.avatar_url, 'dmsg-avatar', true, pst === 'off' ? true : pst);
-        const fresh = tmp.firstChild;
-        if (fresh) {
-          fresh.id = 'mini-avatar';
-          av.parentElement.replaceChild(fresh, av);
-        }
-        if (st) st.textContent = pst === 'off' ? 'Offline' : pst.charAt(0).toUpperCase() + pst.slice(1);
-      } catch (_) {}
-    }
+    // refreshMiniProfile dipertahankan sebagai no-op aman: pemanggil lama
+    // (dashboard/profile/selfprofile) memanggilnya dengan guard typeof.
+    function refreshMiniProfile() { /* mini-profile bar dihapus */ }
     window.refreshMiniProfile = refreshMiniProfile;
   });
 })();

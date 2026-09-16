@@ -1,5 +1,5 @@
-// Self profile card ala Discord (laptop) + Edit Profile + Nameplate + Avatar.
-// Semua gratis, tanpa Nitro/Shop. GIF avatar tetap animasi via <img>.
+// Self profile card ala Discord (laptop) + Customize + Nameplate + Avatar.
+// Semua gratis. GIF avatar tetap animasi via <img>.
 (function () {
   var NAMEPLATE_PRESETS = [
     { id: 'sunset', label: "Nature's Glitter", css: 'linear-gradient(135deg,#3a1c00,#ff6a00,#ffd29b)' },
@@ -465,7 +465,7 @@
           localStorage.setItem('nobarly_user', JSON.stringify(currentUser));
         } catch (_) {}
         closeEditProfile();
-        alert('Profil tersimpan. Semua gratis — tanpa Nitro.');
+        alert('Profil tersimpan.');
       } catch (err) {
         showErr(err.message || 'Gagal menyimpan.');
       } finally {
@@ -572,7 +572,7 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) done(false); });
   };
 
-  // ===== SELECT AVATAR (tanpa Nitro) =====
+  // ===== SELECT AVATAR (semua gratis) =====
   window.openAvatarDialog = function (currentUrl, onPick) {
     var old = document.getElementById('avatar-overlay');
     if (old) old.remove();
@@ -596,7 +596,7 @@
               return '<button class="av-recent' + (u === currentUrl ? ' sel' : '') + '" data-u="' + esc(u) + '"><img src="' + esc(imgSrc(u)) + '" alt="" loading="lazy"></button>';
             }).join('') : '<p class="no-comments">Belum ada.</p>') +
           '</div>' +
-          '<div class="av-free">Avatar animasi <b>gratis</b> — GIF tampil bergerak di chat, DM, voice & profil. Tanpa Nitro.</div>' +
+          '<div class="av-free">Avatar animasi <b>gratis</b> — GIF tampil bergerak di chat, DM, voice & profil.</div>' +
         '</div>' +
         '<div class="modal-footer"><button class="btn btn-secondary" id="av-cancel">Batal</button></div>' +
       '</div>';

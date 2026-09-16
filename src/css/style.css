@@ -3179,7 +3179,7 @@ body, .dashboard-container, .main-content {
   }
 }
 
-/* Halaman quests/shop/nitro/settings */
+/* Halaman customize/settings */
 .xp-head {
   display: flex;
   align-items: center;
@@ -3238,23 +3238,6 @@ body, .dashboard-container, .main-content {
   font-size: 13px;
   margin: 4px 0 8px;
   display: block;
-}
-.mini-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1e1f22;
-  border-top: 2px solid #2b2d31;
-  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-  cursor: pointer;
-}
-.mini-profile .dmsg-avatar {
-  width: 36px;
-  height: 36px;
-  font-size: 15px;
-}
-.mini-profile .dmsg-me b {
-  font-size: 13px;
 }
 .set-row {
   display: flex;

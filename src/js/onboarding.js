@@ -22,7 +22,7 @@ var NOBARLY_INTRO_SLIDES = [
   {
     emoji: '🎨',
     title: 'Customize, Gratis Semua',
-    desc: 'Avatar GIF animasi, nameplate, banner profil — tanpa Nitro, tanpa Shop, tanpa kunci.'
+    desc: 'Avatar GIF animasi, nameplate, banner profil — semuanya gratis, tanpa kunci.'
   },
   {
     emoji: '🚀',
@@ -124,7 +124,7 @@ function loadAboutPage() {
     { icon: '🔊', title: 'Voice Channel', desc: 'Ngobrol suara + soundboard bareng komunitas.' },
     { icon: '💬', title: 'Chat & DM', desc: 'Chat channel real-time + pesan pribadi ke teman.' },
     { icon: '👥', title: 'Komunitas', desc: 'Buat / gabung komunitas game favoritmu.' },
-    { icon: '🎨', title: 'Customize Gratis', desc: 'Avatar GIF, nameplate, banner. Tanpa Nitro.' },
+    { icon: '🎨', title: 'Customize Gratis', desc: 'Avatar GIF, nameplate, banner. Semuanya gratis.' },
     { icon: '🐞', title: 'Lapor Bug', desc: 'Ketemu bug? Lapor langsung dari APK.' }
   ];
   body.innerHTML =
@@ -132,7 +132,7 @@ function loadAboutPage() {
       '<div class="about-hero">' +
         '<div class="about-emoji">📺</div>' +
         '<h2>Nobarly v' + String(ver).replace(/</g, '&lt;') + '</h2>' +
-        '<p>Platform nonton streaming bareng (nobar) dan komunitas gamer. Gratis, tanpa Nitro.</p>' +
+        '<p>Platform nonton streaming bareng (nobar) dan komunitas gamer. Gratis untuk semua.</p>' +
       '</div>' +
       '<div class="about-grid">' +
         feats.map(function (f) {

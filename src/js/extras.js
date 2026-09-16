@@ -1,4 +1,4 @@
-// Halaman Quests / Shop / Nitro / Settings (bottom nav HP + sidebar laptop).
+// Halaman Customize / Settings.
 // Orbs: mata uang Nobarly. Dapat dari check-in harian, dipakai di Shop.
 
 function xpHead(title, orbs) {
@@ -17,7 +17,7 @@ function refreshMyOrbs(orbs) {
   document.querySelectorAll('.xp-balance').forEach(el => { el.textContent = '🪙 ' + orbs; });
 }
 
-// ===== CUSTOMIZE (pengganti Shop + Edit Profile, semua gratis) =====
+// ===== CUSTOMIZE (semua gratis) =====
 // Satu-satunya editor profil. Dibuka dari: sidebar Customize, Settings,
 // floating profile card (tombol Customize), dan halaman Profil.
 async function loadCustomizePage() {
@@ -48,7 +48,7 @@ async function loadCustomizePage() {
         <p>Warna bebas / foto sendiri via tombol Buka Customize di atas. Profile Effect & Frame menyusul (skip dulu).</p>
       </div>
       <div class="xp-card" style="border-color:#23a55a;">
-        <b>💡 Tanpa Nitro, tanpa Shop</b>
+        <b>💡 Semuanya gratis</b>
         <p>Semua kosmetik Nobarly gratis penuh. Tidak ada fitur yang dikunci.</p>
       </div>
     </div>`;
@@ -96,7 +96,7 @@ async function loadCustomizePage() {
   });
 }
 
-// Deprecated: Quests/Shop/Nitro dihapus dari menu (APK gratis). Jaga cache lama.
+// Deprecated: halaman lama dihapus dari menu. Jaga cache lama.
 async function loadQuestsPage() { return loadCustomizePage(); }
 async function loadShopPage() { return loadCustomizePage(); }
 function loadNitroPage() { return loadCustomizePage(); }
@@ -135,7 +135,7 @@ function loadSettingsPage() {
         <i class="fas fa-info-circle"></i><b>Tentang Nobarly</b><span>fitur • cara nobar • versi ›</span>
       </div>
       <div class="set-row">
-        <i class="fas fa-tag"></i><b>Versi</b><span>Nobarly v${escapeHtml(ver)} • gratis, tanpa Nitro</span>
+        <i class="fas fa-tag"></i><b>Versi</b><span>Nobarly v${escapeHtml(ver)} • gratis untuk semua</span>
       </div>
       <div class="set-row" id="set-update">
         <i class="fas fa-arrow-circle-up"></i><b>Cek Update</b><span>lihat versi + changelog ›</span>
