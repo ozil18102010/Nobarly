@@ -90,6 +90,40 @@
       font-size: 12px;
       margin-top: 16px;
     }
+    .oauth-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 12px;
+      color: #666;
+      font-size: 12px;
+    }
+    .oauth-divider::before, .oauth-divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid #333;
+    }
+    #oauth-buttons { display: none; }
+    .oauth-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: inherit;
+    }
+    .oauth-btn i { font-size: 16px; width: 20px; }
+    .oauth-google i { color: #ea4335; }
+    .oauth-facebook { background: #1877f2; border-color: #1877f2; }
+    .oauth-github { background: #24292f; }
   </style>
 </head>
 <body>
@@ -146,6 +180,19 @@
       </form>
 
       <p class="auth-hint">Akun tersimpan di database Nobarly (tabel <b>profiles</b>).</p>
+
+      <div class="oauth-divider"><span>atau masuk dengan</span></div>
+      <div id="oauth-buttons">
+        <button class="oauth-btn oauth-google" id="oauth-google" type="button">
+          <i class="fab fa-google"></i><span>Google</span>
+        </button>
+        <button class="oauth-btn oauth-facebook" id="oauth-facebook" type="button">
+          <i class="fab fa-facebook-f"></i><span>Facebook</span>
+        </button>
+        <button class="oauth-btn oauth-github" id="oauth-github" type="button">
+          <i class="fab fa-github"></i><span>GitHub</span>
+        </button>
+      </div>
       <p class="auth-hint" id="app-version-login" style="margin-top:4px;"></p>
 
       <details id="server-settings" style="margin-top:16px;border:1px solid #333;padding:10px 12px;">
@@ -166,6 +213,7 @@
   <script src="js/config.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/oauth.js"></script>
   <script src="js/bugreport.js"></script>
   <script>
     // Pengaturan server manual untuk HP/APK (tanpa rebuild).

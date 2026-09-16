@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   banner VARCHAR(500),
   nameplate VARCHAR(500),
   status VARCHAR(12) DEFAULT 'online',
+  oauth_provider VARCHAR(20),
+  oauth_id VARCHAR(100),
   connections TEXT,
   last_checkin DATE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

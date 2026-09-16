@@ -18,6 +18,7 @@ const timelineRouter = require('./routes/timeline');
 const followsRouter = require('./routes/follows');
 const debatesRouter = require('./routes/debates');
 const feedbackRouter = require('./routes/feedback');
+const oauthRouter = require('./routes/oauth');
 const queueRouter = require('./routes/queue');
 const questsRouter = require('./routes/quests');
 const typingRouter = require('./routes/typing');
@@ -28,10 +29,12 @@ const app = express();
 // .env.example, dan semua docs — tanpa .env pun langsung nyambung.
 const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 // Versi app — tampil di APK + endpoint /api/version biar ketahuan teman pakai versi mana.
-const APP_VERSION = process.env.APP_VERSION || '2.12.0';
+const APP_VERSION = process.env.APP_VERSION || '2.13.0';
 
 app.use(cors());
 app.use(express.json());
+// Percaya header X-Forwarded-Proto dari Railway agar redirect_uri OAuth https benar
+app.set('trust proxy', 1);
 
 // File gambar upload (GET /uploads/<nama-file>)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
@@ -47,6 +50,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRouter);
+app.use('/api/auth/oauth', oauthRouter);
 app.use('/api/uploads', uploadsRouter);
 app.use('/api/profiles', profilesRouter);
 app.use('/api/communities', communitiesRouter);

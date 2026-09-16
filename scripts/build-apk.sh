@@ -29,17 +29,22 @@ if [ -z "$ANDROID_HOME" ] && [ -d "$HOME/Android/Sdk" ]; then
   export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
 fi
 
-echo "=== 1/3 Sync Capacitor (src -> android) ==="
+echo "=== 1/4 Sync Capacitor (src -> android) ==="
 npx cap sync android
 
 echo ""
-echo "=== 2/3 Build APK debug ==="
+echo "=== 2/4 Build APK debug ==="
 cd android
 ./gradlew assembleDebug
 
 APK="app/build/outputs/apk/debug/app-debug.apk"
 echo ""
-echo "=== 3/3 Selesai ==="
+echo "=== 3/4 Build APK release (tanda tangan resmi) ==="
+./gradlew assembleRelease
+
+REL="app/build/outputs/apk/release/app-release.apk"
+echo ""
+echo "=== 4/4 Selesai ==="
 if [ -f "$APK" ]; then
   ls -lh "$APK"
   echo ""
@@ -51,4 +56,12 @@ if [ -f "$APK" ]; then
 else
   echo "GAGAL: $APK tidak ketemu. Cek error Gradle di atas."
   exit 1
+fi
+if [ -f "$REL" ]; then
+  ls -lh "$REL"
+  VER=$(node -p "require('../package.json').version" 2>/dev/null || echo "1.1.0")
+  cp "$REL" "app/build/outputs/apk/release/nobarly-v${VER}-release.apk"
+  echo "Release (tanda tangan resmi): android/app/build/outputs/apk/release/nobarly-v${VER}-release.apk"
+else
+  echo "CATATAN: $REL tidak ketemu (keystore hilang?). Release dilewati."
 fi

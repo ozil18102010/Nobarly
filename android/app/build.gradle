@@ -7,8 +7,8 @@ android {
         applicationId "com.nobarly.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "2.12.0"
+        versionCode 27
+        versionName "2.13.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +16,27 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            def ksProps = new Properties()
+            def ksFile = rootProject.file('app/keystore.properties')
+            if (ksFile.exists()) {
+                ksProps.load(new FileInputStream(ksFile))
+                storeFile rootProject.file('app/' + ksProps['storeFile'])
+                storePassword ksProps['storePassword']
+                keyAlias ksProps['keyAlias']
+                keyPassword ksProps['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Kalau keystore.properties ada (build lokal) → APK release bertanda tangan resmi.
+            // Kalau tidak ada (mis. CI tanpa key) → fallback debug agar build tidak gagal.
+            def ksFile = rootProject.file('app/keystore.properties')
+            if (ksFile.exists()) signingConfig signingConfigs.release
         }
     }
 }
