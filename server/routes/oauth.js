@@ -1,4 +1,4 @@
-// Login sosial: Google, GitHub, Facebook — alur OAuth via server (aman).
+// Login sosial: Google & GitHub — alur OAuth via server (aman).
 // client_secret TIDAK PERNAH ke APK: tukar code → token murni di server.
 // Klien (web/APK) cuma buka: GET /api/auth/oauth/:provider?target=native|web
 // Callback provider → server → redirect balik:
@@ -25,12 +25,6 @@ const PROVIDERS = {
     env: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
     authUrl: 'https://github.com/login/oauth/authorize',
     scope: 'read:user user:email',
-    extra: {},
-  },
-  facebook: {
-    env: ['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'],
-    authUrl: 'https://www.facebook.com/v21.0/dialog/oauth',
-    scope: 'email,public_profile',
     extra: {},
   },
 };
@@ -120,7 +114,8 @@ router.get('/providers', (req, res) => {
     data: {
       google: !!cfg('google'),
       github: !!cfg('github'),
-      facebook: !!cfg('facebook'),
+      // facebook dihapus permanen — false dipertahankan agar APK lama menyembunyikan tombolnya
+      facebook: false,
     },
     error: null,
   });
@@ -204,20 +199,6 @@ async function exchangeGithub(c, code, redirectUri) {
   return { id: String(me.id), email, name: me.name || me.login || 'User', avatar: me.avatar_url || null };
 }
 
-async function exchangeFacebook(c, code, redirectUri) {
-  const tUrl = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${encodeURIComponent(c.id)}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${encodeURIComponent(c.secret)}&code=${encodeURIComponent(code)}`;
-  const tok = await (await fetch(tUrl)).json();
-  if (!tok.access_token) throw new Error('Facebook: gagal tukar code.');
-  const me = await (await fetch(`https://graph.facebook.com/v21.0/me?fields=id,name,email,picture.type(large)&access_token=${encodeURIComponent(tok.access_token)}`)).json();
-  if (!me.id) throw new Error('Facebook: gagal ambil profil.');
-  return {
-    id: String(me.id),
-    email: me.email || null,
-    name: me.name || 'User',
-    avatar: (me.picture && me.picture.data && me.picture.data.url) || null,
-  };
-}
-
 async function uniqueUsername(conn, base) {
   let clean = String(base || 'User').trim().slice(0, 40) || 'User';
   for (let i = 0; i < 20; i++) {
@@ -243,9 +224,7 @@ router.get('/:provider/callback', async (req, res) => {
   try {
     const profile = name === 'google'
       ? await exchangeGoogle(c, req.query.code, redirectUri)
-      : name === 'github'
-        ? await exchangeGithub(c, req.query.code, redirectUri)
-        : await exchangeFacebook(c, req.query.code, redirectUri);
+      : await exchangeGithub(c, req.query.code, redirectUri);
 
     conn = await pool.getConnection();
     let rows = [];

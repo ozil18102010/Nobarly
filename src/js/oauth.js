@@ -1,4 +1,4 @@
-// Login sosial (Google / GitHub / Facebook) — via browser sistem + deep link.
+// Login sosial (Google / GitHub) — via browser sistem + deep link.
 // Alur: tombol → GET /api/auth/oauth/:provider → provider → server callback
 // → native: nobarly://auth?token=... (ditangkap di sini)
 // → web: login.html?oauth_token=... ( diverifikasi di sini)
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 3) Tampilkan tombol yang dikonfigurasi server
   if (box) {
     var show = function (cfg) {
-      ['google', 'github', 'facebook'].forEach(function (p) {
+      ['google', 'github'].forEach(function (p) {
         var btn = document.getElementById('oauth-' + p);
         if (!btn) return;
         // null/undefined (server lama tanpa endpoint) → tampilkan semua, server yang menolak
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (r) { return r.json(); })
       .then(function (j) { show(j && j.data); })
       .catch(function () { show(null); });
-    ['google', 'github', 'facebook'].forEach(function (p) {
+    ['google', 'github'].forEach(function (p) {
       var btn = document.getElementById('oauth-' + p);
       if (btn) btn.addEventListener('click', function () { startOAuth(p); });
     });
