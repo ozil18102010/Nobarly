@@ -46,7 +46,7 @@ router.get('/recent', async (req, res) => {
     const rows = await conn.query(
       `SELECT m.*, peer_p.username AS peer_username, peer_p.avatar_url AS peer_avatar,
               peer_p.last_seen AS peer_last_seen, peer_p.status AS peer_status,
-              peer_p.server_tag AS peer_tag,
+              NULL AS peer_tag,
               CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END AS peer_id
        FROM dm_messages m
        LEFT JOIN profiles peer_p

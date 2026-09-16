@@ -525,6 +525,22 @@ a:hover {
   gap: 10px;
 }
 
+/* ===== UPDATE MODAL (floating notice versi + changelog) ===== */
+.update-overlay { z-index: 10000; }
+.update-modal { width: min(440px, 94vw); }
+.update-changelog {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e0e0e0;
+  background: #111214;
+  border: 1px solid #2b2d31;
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-line;
+}
+
 /* ===== BADGE ===== */
 .badge {
   display: inline-flex;
@@ -2881,18 +2897,7 @@ body, .dashboard-container, .main-content {
 .avframe-red { border: 3px solid #f23f43 !important; }
 .avframe-blue { border: 3px solid #3b9dff !important; }
 
-/* Badge tag server */
-.usertag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  background: #3b9dff;
-  color: #000000;
-  padding: 1px 6px;
-  margin-left: 4px;
-  vertical-align: middle;
-}
+/* .usertag dihapus bersama fitur server_tag (stub tagHtml() kini kosong) */
 
 /* Banner profil (gradien kotak penuh) */
 .profile-banner {
@@ -4025,33 +4030,43 @@ input[type="url"], input[type="file"], textarea, select {
 
 /* Edit profile 3 kolom */
 .editpf-modal { width: min(980px, 96vw); }
+.editpf-subtitle { font-size: 12px; color: #888; margin: 2px 0 0; font-weight: 400; }
+.editpf-modal .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .editpf-grid {
   display: grid;
-  grid-template-columns: 300px 1fr 260px;
-  gap: 0;
+  grid-template-columns: 310px 1fr 260px;
+  gap: 12px;
+  padding: 12px;
   max-height: 70vh;
   overflow: hidden;
+  background: #17181b;
 }
 .editpf-left {
   overflow-y: auto;
-  padding: 16px;
-  border-right: 1px solid #2b2d31;
+  padding: 4px;
   max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .editpf-center {
   overflow-y: auto;
-  padding: 16px;
-  background: #111214;
+  padding: 4px;
   max-height: 70vh;
 }
 .editpf-right {
   overflow-y: auto;
-  padding: 16px;
-  border-left: 1px solid #2b2d31;
+  padding: 4px;
   max-height: 70vh;
 }
-.editpf-sect { margin-bottom: 16px; }
-.editpf-sect > label { display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px; color: #b0b0b0; }
+.editpf-sect {
+  margin-bottom: 0;
+  background: #1e1f22;
+  border: 1px solid #2b2d31;
+  border-radius: 10px;
+  padding: 12px;
+}
+.editpf-sect > label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 8px; color: #b0b0b0; text-transform: uppercase; letter-spacing: 0.6px; }
 .editpf-sect input[type="text"], .editpf-sect textarea, .editpf-sect select {
   width: 100%;
   box-sizing: border-box;
@@ -4115,7 +4130,7 @@ input[type="url"], input[type="file"], textarea, select {
   border: 1px dashed #444;
   padding: 10px;
 }
-.editpf-previewcard { background: #1e1f22; border: 1px solid #2b2d31; overflow: hidden; }
+.editpf-previewcard { background: #1e1f22; border: 1px solid #2b2d31; border-radius: 12px; overflow: hidden; }
 .editpf-prevrow { padding: 0 14px; margin-top: -30px; }
 .editpf-prevname { font-size: 16px; font-weight: 800; line-height: 1.3; padding: 8px 14px 0; }
 .editpf-prevsub { font-size: 12px; color: #b0b0b0; padding: 0 14px; }
@@ -4128,7 +4143,7 @@ input[type="url"], input[type="file"], textarea, select {
 .editpf-game span { font-size: 13px; }
 @media (max-width: 900px) {
   .editpf-grid { grid-template-columns: 1fr; max-height: 80vh; overflow-y: auto; }
-  .editpf-left, .editpf-center, .editpf-right { max-height: none; border: none; border-bottom: 1px solid #2b2d31; }
+  .editpf-left, .editpf-center, .editpf-right { max-height: none; }
 }
 
 /* Nameplate dialog */

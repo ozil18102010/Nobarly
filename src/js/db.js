@@ -120,7 +120,7 @@ function jsq(s) {
 // cls = class bentuk (mis. 'dmsg-avatar', 'voice-user-avatar'), dot = titik status,
 // st = status presence: true/'off' = offline abu, 'idle' = kuning, 'dnd' = merah,
 //      selain itu hijau (online). Plus frame warna + badge tag opsional.
-// frame = 'white'|'gold'|'red'|'blue' (border avatar), tag = server_tag.
+// frame = 'white'|'gold'|'red'|'blue' (border avatar).
 function avatarHtml(name, url, cls, dot, st, frame) {
   const initial = escapeHtml(((name || '?').charAt(0) || '?').toUpperCase());
   let dotCls = 'status-dot';
@@ -136,10 +136,10 @@ function avatarHtml(name, url, cls, dot, st, frame) {
   return `<div class="${cls}${fc}">${initial}${d}</div>`;
 }
 
-// Badge tag server (chip kotak kecil di samping nama)
+// Badge tag server DIHAPUS (permintaan user). Stub dipertahankan agar
+// pemanggil lama (APK cached) tidak crash — selalu render kosong.
 function tagHtml(tag) {
-  if (!tag) return '';
-  return `<span class="usertag">${escapeHtml(tag)}</span>`;
+  return '';
 }
 
 // Banner profil: gradien bawaan / warna hex / foto upload

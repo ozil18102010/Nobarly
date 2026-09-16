@@ -25,9 +25,12 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: APP_VERSION
-        value: 2.10.0
+        value: 2.11.0
       # Isi setelah APK diupload (mis. link GitHub Release), biar user dapat notif update
       - key: APK_URL
+        sync: false
+      # Changelog update (tampil di floating modal Update di APK, baris baru = \n)
+      - key: UPDATE_MESSAGE
         sync: false
       # Cloudinary (gambar permanen — tanpa ini upload hilang tiap restart).
       # Daftar gratis di cloudinary.com → Dashboard → salin 3 nilai ini.

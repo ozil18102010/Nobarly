@@ -17,7 +17,9 @@ function refreshMyOrbs(orbs) {
   document.querySelectorAll('.xp-balance').forEach(el => { el.textContent = '🪙 ' + orbs; });
 }
 
-// ===== CUSTOMIZE (pengganti Shop, semua gratis) =====
+// ===== CUSTOMIZE (pengganti Shop + Edit Profile, semua gratis) =====
+// Satu-satunya editor profil. Dibuka dari: sidebar Customize, Settings,
+// floating profile card (tombol Customize), dan halaman Profil.
 async function loadCustomizePage() {
   const body = document.getElementById('content-body');
   document.getElementById('page-title').textContent = 'Customize';
@@ -31,7 +33,7 @@ async function loadCustomizePage() {
         <b>👤 Avatar & Nameplate</b>
         <p>Upload foto/GIF sendiri. GIF ikut bergerak di chat, DM, voice & profil.</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-primary" id="cz-edit" style="width:auto;">✏️ Edit Profile</button>
+          <button class="btn btn-primary" id="cz-edit" style="width:auto;">🎨 Buka Customize</button>
           <button class="btn btn-secondary" id="cz-nameplate" style="width:auto;">Change Nameplate</button>
           <button class="btn btn-secondary" id="cz-avatar" style="width:auto;">Change Avatar</button>
         </div>
@@ -43,7 +45,7 @@ async function loadCustomizePage() {
       </div>
       <div class="xp-card">
         <b>🌈 Banner</b>
-        <p>Warna bebas / foto sendiri via Edit Profile. Profile Effect & Frame menyusul (skip dulu).</p>
+        <p>Warna bebas / foto sendiri via tombol Buka Customize di atas. Profile Effect & Frame menyusul (skip dulu).</p>
       </div>
       <div class="xp-card" style="border-color:#23a55a;">
         <b>💡 Tanpa Nitro, tanpa Shop</b>
@@ -132,6 +134,9 @@ function loadSettingsPage() {
       <div class="set-row">
         <i class="fas fa-info-circle"></i><b>Versi</b><span>Nobarly v${escapeHtml(ver)} • gratis, tanpa Nitro</span>
       </div>
+      <div class="set-row" id="set-update">
+        <i class="fas fa-arrow-circle-up"></i><b>Cek Update</b><span>lihat versi + changelog ›</span>
+      </div>
       <div class="set-row" id="set-logout" style="border-color:#f23f43;">
         <i class="fas fa-sign-out-alt" style="color:#f23f43;"></i><b style="color:#f23f43;">Keluar</b><span></span>
       </div>
@@ -153,6 +158,14 @@ function loadSettingsPage() {
   });
   document.getElementById('set-bug').addEventListener('click', () => {
     if (typeof openBugReportModal === 'function') openBugReportModal();
+  });
+  document.getElementById('set-update').addEventListener('click', async () => {
+    try {
+      if (typeof checkAppUpdate === 'function') {
+        const r = await checkAppUpdate(true);
+        if (!r) alert('Kamu sudah pakai versi terbaru 🎉');
+      }
+    } catch (_) {}
   });
   document.getElementById('set-logout').addEventListener('click', () => {
     if (confirm('Keluar dari Nobarly?')) logout();

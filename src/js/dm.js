@@ -182,9 +182,9 @@ async function refreshFriendList() {
       const unread = isConvUnread(c);
       if (unread) anyUnread = true;
       return `
-      <div class="dmsg-row ${dmPeer && dmPeer.id === c.peer_id ? 'friend-active' : ''}" onclick="openDM('${c.peer_id}', '${jsq(c.peer_username || 'User')}', '${jsq(c.peer_avatar || '')}', '${jsq(c.peer_last_seen || '')}', '${jsq(c.peer_status || 'online')}', '${jsq(c.peer_tag || '')}')">
+      <div class="dmsg-row ${dmPeer && dmPeer.id === c.peer_id ? 'friend-active' : ''}" onclick="openDM('${c.peer_id}', '${jsq(c.peer_username || 'User')}', '${jsq(c.peer_avatar || '')}', '${jsq(c.peer_last_seen || '')}', '${jsq(c.peer_status || 'online')}')">
         ${avatarHtml(c.peer_username, c.peer_avatar, 'dmsg-avatar', true, presenceOf(c.peer_status, c.peer_last_seen))}
-        <div class="dmsg-mid"><b>${escapeHtml(c.peer_username || 'User')} ${tagHtml(c.peer_tag)}</b><span>${escapeHtml(dmSnippet(c))}</span></div>
+        <div class="dmsg-mid"><b>${escapeHtml(c.peer_username || 'User')}</b><span>${escapeHtml(dmSnippet(c))}</span></div>
         ${unread ? '<span class="unread-dot" title="Baru"></span>' : ''}
         <span class="dmsg-time">${dmTimeAgo(c.created_at)}</span>
       </div>`;
@@ -196,9 +196,9 @@ async function refreshFriendList() {
   listBox.innerHTML = fresh.length === 0
     ? ''
     : `<div class="dmsg-section">TEMAN</div>` + fresh.map(r => `
-      <div class="dmsg-row ${dmPeer && dmPeer.id === r.friend_id ? 'friend-active' : ''}" onclick="openDM('${r.friend_id}', '${jsq(r.friend_username || 'User')}', '${jsq(r.friend_avatar || '')}', '${jsq(r.friend_last_seen || '')}', '${jsq(r.friend_status || 'online')}', '${jsq(r.friend_tag || '')}')">
+      <div class="dmsg-row ${dmPeer && dmPeer.id === r.friend_id ? 'friend-active' : ''}" onclick="openDM('${r.friend_id}', '${jsq(r.friend_username || 'User')}', '${jsq(r.friend_avatar || '')}', '${jsq(r.friend_last_seen || '')}', '${jsq(r.friend_status || 'online')}')">
         ${avatarHtml(r.friend_username, r.friend_avatar, 'dmsg-avatar', true, presenceOf(r.friend_status, r.friend_last_seen))}
-        <div class="dmsg-mid"><b>${escapeHtml(r.friend_username || 'User')} ${tagHtml(r.friend_tag)}</b><span>Mulai mengobrol 👋</span></div>
+        <div class="dmsg-mid"><b>${escapeHtml(r.friend_username || 'User')}</b><span>Mulai mengobrol 👋</span></div>
         <button class="post-action-btn" title="Hapus teman" onclick="event.stopPropagation();removeFriend('${r.id}')"><i class="fas fa-user-times"></i></button>
       </div>`).join('');
 }
@@ -246,14 +246,14 @@ async function removeFriend(relId) {
   refreshFriendList();
 }
 
-function openDM(friendId, username, avatar, lastSeen, pstatus, ptag) {
+function openDM(friendId, username, avatar, lastSeen, pstatus) {
   // Tandai dibaca saat dibuka
   markDmRead(friendId);
   paintDmUnread(false);
   // Bisa dipanggil dari luar halaman Pesan (mis. halaman Profil):
   // pindah dulu ke halaman Pesan, baru buka chat.
   if (!document.getElementById('dm-main')) {
-    window._pendingDM = { friendId, username, avatar, lastSeen, pstatus, ptag };
+    window._pendingDM = { friendId, username, avatar, lastSeen, pstatus };
     const sideDm = document.querySelector('.sidebar-item[data-page="dm"]');
     if (sideDm) sideDm.click();
     else if (typeof renderPage === 'function') renderPage('dm');
@@ -265,13 +265,13 @@ function openDM(friendId, username, avatar, lastSeen, pstatus, ptag) {
         const p = window._pendingDM;
         window._pendingDM = null;
         if (p && document.getElementById('dm-main')) {
-          openDM(p.friendId, p.username, p.avatar, p.lastSeen, p.pstatus, p.ptag);
+          openDM(p.friendId, p.username, p.avatar, p.lastSeen, p.pstatus);
         }
       }
     }, 250);
     return;
   }
-  dmPeer = { id: friendId, username, avatar: avatar || null, lastSeen: lastSeen || null, status: pstatus || 'online', tag: ptag || null };
+  dmPeer = { id: friendId, username, avatar: avatar || null, lastSeen: lastSeen || null, status: pstatus || 'online' };
   refreshFriendList();
   const main = document.getElementById('dm-main');
   main.innerHTML = `
@@ -280,7 +280,7 @@ function openDM(friendId, username, avatar, lastSeen, pstatus, ptag) {
     <div class="dm-header dmsg-chathead">
       <button class="dmsg-iconbtn" onclick="closeDM()" title="Kembali"><i class="fas fa-arrow-left"></i></button>
       ${(typeof avatarHtml === 'function' ? avatarHtml(username, (dmPeer && dmPeer.avatar) || null, 'dmsg-avatar sm', true, presenceOf(dmPeer && dmPeer.status, dmPeer && dmPeer.lastSeen)) : `<div class="dmsg-avatar sm">${escapeHtml(username.charAt(0).toUpperCase())}<span class="status-dot"></span></div>`)}
-      <b>${escapeHtml(username)} ${tagHtml(dmPeer && dmPeer.tag)}</b>
+      <b>${escapeHtml(username)}</b>
       <button class="dmsg-iconbtn" title="Lihat profil" onclick="openProfile('${friendId}')" style="margin-left:auto;"><i class="fas fa-user"></i></button>
     </div>
     <div class="chat-messages dm-messages" id="dm-messages">
@@ -343,7 +343,7 @@ async function renderDmPeerPanel(friendId) {
           ${avatarHtml(p.username, p.avatar_url, 'dmsg-avatar pf-avatar' + (p.avatar_frame ? ' avframe-' + p.avatar_frame : ''), true, presenceOf(p.status, p.last_seen))}
         </div>
         <div class="pf-body">
-          <h2>${escapeHtml(p.username)} ${tagHtml(p.server_tag)}</h2>
+          <h2>${escapeHtml(p.username)}</h2>
           <div class="pf-status">${statusLabel(p)}</div>
           <div class="pf-section">
             <div class="pf-section-title">BIO</div>

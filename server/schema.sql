@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS profiles (
   avatar_frame VARCHAR(24),
   banner VARCHAR(500),
   nameplate VARCHAR(500),
-  server_tag VARCHAR(24),
   status VARCHAR(12) DEFAULT 'online',
   connections TEXT,
   last_checkin DATE,

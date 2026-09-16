@@ -158,8 +158,66 @@ function openBugReportModal(prefillMessage) {
   });
 })();
 
-// Cek update: bandingkan versi APK vs versi server. Kalau beda → kasih banner.
-async function checkAppUpdate() {
+// Cek update: bandingkan versi APK vs versi server → floating modal.
+// Isi modal: versi baru, versi kamu, changelog (dari UPDATE_MESSAGE server),
+// tombol "Update" (buka apk_url di APK) + "Nanti" (snooze 24 jam per versi).
+function _isNewerVer(serverVer, localVer) {
+  try {
+    const pa = String(serverVer).trim().split('.').map((x) => parseInt(x, 10) || 0);
+    const pb = String(localVer).trim().split('.').map((x) => parseInt(x, 10) || 0);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      const a = pa[i] || 0, b = pb[i] || 0;
+      if (a > b) return true;
+      if (a < b) return false;
+    }
+    return false;
+  } catch (_) { return String(serverVer) !== String(localVer); }
+}
+
+function _updateSnoozed(serverVer) {
+  try {
+    const raw = localStorage.getItem('nobarly_update_snooze_' + serverVer);
+    if (!raw) return false;
+    return (Date.now() - parseInt(raw, 10)) < 24 * 60 * 60 * 1000;
+  } catch (_) { return false; }
+}
+
+function showUpdateModal(serverVer, localVer, changelog, apkUrl) {
+  if (document.getElementById('update-overlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'update-overlay';
+  overlay.className = 'modal-overlay active update-overlay';
+  const safeVer = String(serverVer).replace(/</g, '&lt;');
+  const safeLocal = String(localVer).replace(/</g, '&lt;');
+  const safeLog = String(changelog || 'Perbaikan bug + peningkatan tampilan.').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+  overlay.innerHTML = `
+    <div class="modal update-modal">
+      <div class="modal-header"><h3>⬆️ Update tersedia: v${safeVer}</h3></div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:#b0b0b0;margin:0 0 8px;">Kamu pakai v${safeLocal}. Update langsung dari APK ini — gausah nunggu share.</p>
+        <div class="update-changelog">${safeLog}</div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-secondary" id="update-later" style="width:auto;">Nanti</button>
+        ${apkUrl
+          ? `<a class="btn btn-primary" id="update-now" style="width:auto;text-decoration:none;text-align:center;" href="${apkUrl}" target="_blank" rel="noopener">Update</a>`
+          : `<button class="btn btn-primary" id="update-now" style="width:auto;">OK</button>`}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = (snooze) => {
+    try {
+      if (snooze) localStorage.setItem('nobarly_update_snooze_' + serverVer, String(Date.now()));
+    } catch (_) {}
+    try { overlay.remove(); } catch (_) {}
+  };
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(true); });
+  document.getElementById('update-later').onclick = () => close(true);
+  const nowBtn = document.getElementById('update-now');
+  if (nowBtn && !apkUrl) nowBtn.onclick = () => close(true);
+}
+
+async function checkAppUpdate(force) {
   try {
     const base = getBugApiBase();
     const ctrl = new AbortController();
@@ -169,29 +227,15 @@ async function checkAppUpdate() {
     const json = await res.json();
     const serverVer = json && json.data && json.data.version;
     const localVer = (typeof NOBARLY_VERSION !== 'undefined' && NOBARLY_VERSION) || window.NOBARLY_VERSION;
-    if (!serverVer || !localVer || serverVer === localVer) return;
-    const apkUrl = json.data.apk_url;
-    const banner = document.createElement('div');
-    banner.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;z-index:9999;background:#fff;color:#000;padding:12px 14px;font-size:13px;font-weight:700;display:flex;gap:10px;align-items:center;justify-content:space-between;box-shadow:4px 4px 0 #333;border:1px solid #000;';
-    banner.innerHTML = `<span>⬆️ Ada versi baru ${serverVer} (kamu: ${localVer}). Download biar bug lama hilang.</span>`;
-    if (apkUrl) {
-      const a = document.createElement('a');
-      a.href = apkUrl;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'Download';
-      a.style.cssText = 'background:#000;color:#fff;padding:8px 12px;text-decoration:none;white-space:nowrap;';
-      banner.appendChild(a);
-    } else {
-      const b = document.createElement('button');
-      b.textContent = 'OK';
-      b.style.cssText = 'background:#000;color:#fff;padding:8px 12px;border:none;cursor:pointer;';
-      b.onclick = () => banner.remove();
-      banner.appendChild(b);
-    }
-    document.body.appendChild(banner);
-  } catch (_) { /* offline → diam */ }
+    if (!serverVer || !localVer || !_isNewerVer(serverVer, localVer)) return null;
+    if (!force && _updateSnoozed(serverVer)) return null;
+    const apkUrl = json.data.apk_url || null;
+    const changelog = json.data.message || null;
+    showUpdateModal(serverVer, localVer, changelog, apkUrl);
+    return { serverVer, localVer, apkUrl, changelog };
+  } catch (_) { /* offline → diam */ return null; }
 }
+window.checkAppUpdate = checkAppUpdate;
 
 document.addEventListener('DOMContentLoaded', () => {
   try { checkAppUpdate(); } catch (_) {}

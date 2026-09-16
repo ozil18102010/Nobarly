@@ -6,7 +6,8 @@ const { requireLogin, requireSelf } = require('../middleware/auth');
 const router = express.Router();
 
 // Kolom publik profil (tanpa password_hash — dulu SELECT * membocorkannya ke semua user)
-const PUBLIC_COLS = 'id, username, email, avatar_url, bio, orbs, avatar_frame, banner, nameplate, server_tag, status, connections, last_seen, created_at';
+// server_tag DIHAPUS permanen.
+const PUBLIC_COLS = 'id, username, email, avatar_url, bio, orbs, avatar_frame, banner, nameplate, status, connections, last_seen, created_at';
 
 // GET /api/profiles/search?q=X — cari user by username/email (untuk tambah teman)
 router.get('/search', async (req, res) => {
@@ -18,7 +19,7 @@ router.get('/search', async (req, res) => {
     }
     conn = await pool.getConnection();
     const rows = await conn.query(
-      'SELECT id, username, email, avatar_url, bio, orbs, avatar_frame, banner, nameplate, server_tag, status, connections, last_seen, created_at FROM profiles WHERE username LIKE ? OR email LIKE ? ORDER BY username ASC LIMIT 10',
+      'SELECT id, username, email, avatar_url, bio, orbs, avatar_frame, banner, nameplate, status, connections, last_seen, created_at FROM profiles WHERE username LIKE ? OR email LIKE ? ORDER BY username ASC LIMIT 10',
       [`%${q}%`, `%${q}%`]
     );
     res.json({ data: rows, error: null });
@@ -60,8 +61,8 @@ router.put('/:id/seen', requireLogin, requireSelf('id'), async (req, res) => {
   }
 });
 
-// PUT /api/profiles/:id — update profil (avatar, bio, status, frame, banner, tag, connections, username, nameplate)
-const PROFILE_FIELDS = ['avatar_url', 'bio', 'status', 'avatar_frame', 'banner', 'server_tag', 'connections', 'username', 'nameplate'];
+// PUT /api/profiles/:id — update profil (avatar, bio, status, frame, banner, connections, username, nameplate)
+const PROFILE_FIELDS = ['avatar_url', 'bio', 'status', 'avatar_frame', 'banner', 'connections', 'username', 'nameplate'];
 // Kunci IDOR: dulu tanpa auth, siapa pun bisa PUT /profiles/:id orang lain.
 router.put('/:id', requireLogin, requireSelf('id'), async (req, res) => {
   let conn;
@@ -84,7 +85,6 @@ router.put('/:id', requireLogin, requireSelf('id'), async (req, res) => {
       return res.status(400).json({ data: null, error: { message: 'status tidak valid' } });
     }
     if (updates.bio !== undefined) updates.bio = String(updates.bio).slice(0, 280);
-    if (updates.server_tag !== undefined) updates.server_tag = String(updates.server_tag).slice(0, 24) || null;
     if (updates.avatar_frame !== undefined) updates.avatar_frame = String(updates.avatar_frame).slice(0, 24) || null;
     if (updates.banner !== undefined) {
       const b = String(updates.banner);

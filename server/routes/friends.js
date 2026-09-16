@@ -21,13 +21,13 @@ router.get('/', async (req, res) => {
               CASE WHEN f.requester_id = ? THEN a.avatar_url ELSE r.avatar_url END AS friend_avatar,
               CASE WHEN f.requester_id = ? THEN a.last_seen ELSE r.last_seen END AS friend_last_seen,
               CASE WHEN f.requester_id = ? THEN a.status ELSE r.status END AS friend_status,
-              CASE WHEN f.requester_id = ? THEN a.server_tag ELSE r.server_tag END AS friend_tag
+              NULL AS friend_tag
        FROM friends f
        LEFT JOIN profiles r ON r.id = f.requester_id
        LEFT JOIN profiles a ON a.id = f.addressee_id
        WHERE f.requester_id = ? OR f.addressee_id = ?
        ORDER BY f.created_at DESC`,
-      [user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id]
+      [user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id]
     );
     res.json({ data: rows, error: null });
   } catch (e) {

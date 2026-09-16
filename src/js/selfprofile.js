@@ -80,7 +80,6 @@
           '<div class="selfcard-nameplate" style="' + nameplateStyle(u.nameplate) + '">' +
             '<span class="selfcard-np-avatar">' + (u.avatar_url ? '<img src="' + esc(imgSrc(u.avatar_url)) + '" alt="">' : esc(name.charAt(0).toUpperCase())) + '</span>' +
             '<span class="selfcard-np-name">' + esc(name) + '</span>' +
-            (u.server_tag ? '<span class="usertag">' + esc(u.server_tag) + '</span>' : '') +
           '</div>' +
         '</div>' +
         '<div class="selfcard-id">' + av +
@@ -89,11 +88,11 @@
         '</div>' +
         '<div class="selfcard-main">' +
           '<div class="selfcard-name">' + esc(name) + '</div>' +
-          '<div class="selfcard-sub">' + esc(name) + (u.server_tag ? ' • ' + esc(u.server_tag) : '') + '</div>' +
+          '<div class="selfcard-sub">' + esc(name) + '</div>' +
           '<div class="selfcard-bio">' + esc((u.bio || 'Belum ada bio.').slice(0, 120)) + '</div>' +
           '<a href="#" class="minipf-fulllink" id="selfcard-fullbio">View Full Bio</a>' +
           '<div class="selfcard-games"><b>Game Collection</b><div class="conn-chips" id="selfcard-conns"></div></div>' +
-          '<button class="selfcard-rowbtn" id="selfcard-edit"><i class="fas fa-pen"></i> Edit Profile</button>' +
+          '<button class="selfcard-rowbtn" id="selfcard-edit"><i class="fas fa-palette"></i> Customize</button>' +
           '<button class="selfcard-rowbtn" id="selfcard-status"><span class="selfcard-dot" style="background:' + st.dot + ';"></span> ' + esc(st.label) + ' <span style="margin-left:auto;">›</span></button>' +
           '<button class="selfcard-rowbtn" id="selfcard-switch"><i class="fas fa-user-circle"></i> Switch Accounts <span style="margin-left:auto;">›</span></button>' +
           '<div class="selfcard-foot">' +
@@ -175,8 +174,10 @@
     } catch (_) {}
   };
 
-  // ===== EDIT PROFILE MODAL (3 kolom ala Discord, tanpa Nitro) =====
-  window.openEditProfileModal = function () {
+  // ===== CUSTOMIZE MODAL (dulu "Edit Profile", kini disatukan dengan halaman Customize) =====
+  // Isi = sama persis dengan halaman Customize: avatar, nameplate, banner, frame, bio, status, connections.
+  // Alias dipertahankan agar pemanggil lama tidak rusak.
+  window.openCustomizeModal = window.openEditProfileModal = function () {
     closeEditProfile();
     var u = me();
     if (!u) return;
@@ -186,13 +187,12 @@
     overlay.className = 'modal-overlay active editpf-overlay';
     overlay.innerHTML =
       '<div class="modal editpf-modal">' +
-        '<div class="modal-header"><h3>Edit Profile</h3><button class="modal-close" id="editpf-close">&times;</button></div>' +
+        '<div class="modal-header"><div><h3>🎨 Customize</h3><p class="editpf-subtitle">Avatar • nameplate • banner • bio — semua gratis, preview langsung</p></div><button class="modal-close" id="editpf-close">&times;</button></div>' +
         '<div class="editpf-grid">' +
           // KIRI: kontrol
           '<div class="editpf-left">' +
             '<div class="editpf-sect"><label>Main Profile</label>' +
               '<div class="form-group"><input type="text" id="ep-display" maxlength="50" value="' + esc(name) + '" placeholder="Display name"></div>' +
-              '<div class="form-group"><input type="text" id="ep-tag" maxlength="24" value="' + esc(u.server_tag || '') + '" placeholder="Server tag (badge)"></div>' +
             '</div>' +
             '<div class="editpf-sect"><label>Nameplate</label>' +
               '<div class="editpf-np" id="ep-np-preview" style="' + nameplateStyle(u.nameplate) + '"><span>' + esc(name || 'Nama') + '</span></div>' +
@@ -304,7 +304,6 @@
 
     function refreshPreview() {
       var dname = document.getElementById('ep-display').value.trim() || 'Nama';
-      var tag = document.getElementById('ep-tag').value.trim();
       var bio = document.getElementById('ep-bio').value.trim() || 'Belum ada bio.';
       // banner
       var bb = document.getElementById('ep-prev-banner');
@@ -331,12 +330,12 @@
         pa.innerHTML = '<div class="editpf-avcur' + frameCls + '">' + esc(dname.charAt(0).toUpperCase()) + '</div>';
       }
       document.getElementById('ep-prev-name').textContent = dname;
-      document.getElementById('ep-prev-sub').textContent = dname + (tag ? ' • ' + tag : '');
+      document.getElementById('ep-prev-sub').textContent = dname;
       document.getElementById('ep-prev-bio').textContent = bio;
       // nameplate preview kiri
       var np = document.getElementById('ep-np-preview');
       np.setAttribute('style', nameplateStyle(selNameplate));
-      np.innerHTML = '<span>' + esc(dname) + '</span>' + (tag ? ' <span class="usertag">' + esc(tag) + '</span>' : '');
+      np.innerHTML = '<span>' + esc(dname) + '</span>';
       // games kanan
       var games = connKeys.map(function (k) {
         var v = (document.getElementById('ep-conn-' + k) || {}).value || '';
@@ -346,7 +345,7 @@
         ? games.map(function (g) { return '<div class="editpf-game"><b>' + esc(g.k) + '</b><span>' + esc(g.v) + '</span></div>'; }).join('')
         : '<p class="no-comments">Tambah game favoritmu (maks 20).</p>';
     }
-    ['ep-display', 'ep-tag', 'ep-bio'].forEach(function (id) {
+    ['ep-display', 'ep-bio'].forEach(function (id) {
       document.getElementById(id).addEventListener('input', refreshPreview);
     });
     connKeys.forEach(function (k) {
@@ -411,14 +410,13 @@
         var username = document.getElementById('ep-display').value.trim();
         var bio = document.getElementById('ep-bio').value.trim();
         var status = document.getElementById('ep-status').value;
-        var tag = document.getElementById('ep-tag').value.trim();
         if (username.length < 3) throw new Error('Display name minimal 3 karakter.');
         var connections = {};
         connKeys.forEach(function (k) {
           var v = (document.getElementById('ep-conn-' + k).value || '').trim();
           if (v) connections[k] = v;
         });
-        var payload = { username: username, bio: bio, status: status, server_tag: tag, connections: connections, avatar_frame: selFrame || null };
+        var payload = { username: username, bio: bio, status: status, connections: connections, avatar_frame: selFrame || null };
         // avatar
         if (selAvatarFile) {
           payload.avatar_url = await uploadImage(selAvatarFile);

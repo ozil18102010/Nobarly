@@ -78,7 +78,7 @@ async function openMiniProfile(userId, anchor) {
     </div>
     <div class="minipf-id">
       ${avatarHtml(p.username, p.avatar_url, 'dmsg-avatar minipf-avatar' + frameCls, true, st)}
-      <div class="minipf-name">${escapeHtml(p.username)} ${tagHtml(p.server_tag)}</div>
+      <div class="minipf-name">${escapeHtml(p.username)}</div>
       <div class="minipf-sub">${escapeHtml(p.username)} • ${statusLabel(p)}</div>
     </div>
     <div class="minipf-body">
@@ -123,7 +123,7 @@ async function sendMiniProfileMsg(userId) {
     window._dmPrefill = text;
     const go = () => {
       try {
-        openDM(p.id, p.username, p.avatar_url || '', p.last_seen || '', p.status || 'online', p.server_tag || '');
+        openDM(p.id, p.username, p.avatar_url || '', p.last_seen || '', p.status || 'online');
         const box = document.getElementById('dm-input');
         if (box) {
           box.value = window._dmPrefill || '';

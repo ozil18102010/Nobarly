@@ -118,7 +118,7 @@ async function renderProfilePage() {
           ${isMe ? `<div class="pf-orbs">GRATIS</div>` : ''}
         </div>
         <div class="pf-body">
-          <h2>${escapeHtml(p.username)} ${tagHtml(p.server_tag)}</h2>
+          <h2>${escapeHtml(p.username)}</h2>
           <div class="pf-status">${statusLabel(p)}</div>
           ${inVoice}
           <div class="pf-section">
@@ -131,8 +131,8 @@ async function renderProfilePage() {
           </div>
           <div class="pf-section" style="display:flex;gap:8px;flex-wrap:wrap;">
             ${isMe
-              ? `<button class="btn btn-primary" style="width:auto;" onclick="renderProfileEdit()">✏️ Edit Profil</button>`
-              : `<button class="btn btn-primary" style="width:auto;" onclick="openDM('${p.id}', '${jsq(p.username)}', '${jsq(p.avatar_url || '')}', '${jsq(p.last_seen || '')}', '${jsq(p.status || 'online')}', '${jsq(p.server_tag || '')}')">💬 Kirim Pesan</button>
+              ? `<button class="btn btn-primary" style="width:auto;" onclick="renderProfileEdit()">🎨 Customize</button>`
+              : `<button class="btn btn-primary" style="width:auto;" onclick="openDM('${p.id}', '${jsq(p.username)}', '${jsq(p.avatar_url || '')}', '${jsq(p.last_seen || '')}', '${jsq(p.status || 'online')}')">💬 Kirim Pesan</button>
                  <button class="btn btn-secondary" style="width:auto;" onclick="sendFriendRequest('${p.id}')">+ Teman</button>`}
           </div>
         </div>
@@ -151,8 +151,12 @@ function resumeVoice() {
 }
 
 async function renderProfileEdit() {
-  // Alur baru: edit via floating modal Discord-style (gratis, tanpa Nitro).
-  // Jaga kompatibilitas tombol lama → buka modal baru.
+  // Alur baru: tidak ada halaman Edit Profil terpisah — semua via modal Customize
+  // (sama isi dengan halaman Customize). Jaga kompatibilitas tombol lama.
+  if (typeof openCustomizeModal === 'function') {
+    openCustomizeModal();
+    return;
+  }
   if (typeof openEditProfileModal === 'function') {
     openEditProfileModal();
     return;
@@ -178,10 +182,6 @@ async function renderProfileEdit() {
         <select id="pf-status">
           ${STATUSES.map(s => `<option value="${s.id}" ${p.status === s.id ? 'selected' : ''}>${s.label}</option>`).join('')}
         </select>
-      </div>
-      <div class="form-group">
-        <label>Server Tag (badge di samping nama)</label>
-        <input type="text" id="pf-tag" value="${escapeHtml(p.server_tag || '')}" maxlength="24" placeholder="Contoh: JAWA">
       </div>
       <div class="form-group">
         <label>Avatar Decoration (gratis — segera hadir, border skip dulu)</label>
@@ -244,7 +244,6 @@ async function renderProfileEdit() {
       const username = document.getElementById('pf-username').value.trim();
       const bio = document.getElementById('pf-bio').value.trim();
       const status = document.getElementById('pf-status').value;
-      const tag = document.getElementById('pf-tag').value.trim();
       const frame = document.querySelector('#pf-frames .pick.sel')?.dataset.v || null;
       const bannerPick = document.querySelector('#pf-banners .pick.sel')?.dataset.v || null;
       // Foto banner sendiri mengalahkan pilihan gradien
@@ -258,7 +257,7 @@ async function renderProfileEdit() {
         const v = document.getElementById('pf-conn-' + k.id).value.trim();
         if (v) connections[k.id] = v;
       });
-      const payload = { username, bio, status, server_tag: tag, avatar_frame: frame, banner, connections };
+      const payload = { username, bio, status, avatar_frame: frame, banner, connections };
       const photo = document.getElementById('pf-photo').files[0];
       if (photo) {
         payload.avatar_url = await uploadImage(photo);

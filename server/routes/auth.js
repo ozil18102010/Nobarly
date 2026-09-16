@@ -30,7 +30,6 @@ function publicUser(row) {
     orbs: row.orbs || 0,
     avatar_frame: row.avatar_frame || null,
     banner: row.banner || null,
-    server_tag: row.server_tag || null,
     status: row.status || 'online',
     connections,
     last_seen: row.last_seen || null,
