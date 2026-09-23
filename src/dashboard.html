@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/mobile.css">
   <link rel="stylesheet" href="css/social.css">
   <link rel="stylesheet" href="css/fontawesome.min.css">
+  <link rel="stylesheet" href="css/nobarly-design-system.css">
   <script>try{if(localStorage.getItem('nobarly_theme')==='light')document.documentElement.classList.add('theme-light-pre');}catch(_){}try{if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())document.documentElement.classList.add('is-native-pre');}catch(_){}</script>
   <style>html.theme-light-pre body{background:#f5f5f5;}html.is-native-pre .title-bar{display:none !important;}</style>
 </head>
@@ -134,9 +135,13 @@
 
       <div class="content-body" id="content-body">
         <div class="empty-state">
-          <i class="fas fa-gamepad"></i>
+          <i class="fas fa-gamepad" aria-hidden="true"></i>
           <h3>Selamat Datang di Nobarly!</h3>
-          <p>Platform nonton streaming bareng (nobar) untuk gamer.</p>
+          <p>Platform nonton streaming bareng (nobar) untuk gamer. Bikin komunitas, mulai nobar sinkron, atau jelajahi komunitas yang lagi rame.</p>
+          <div class="cta-row">
+            <button class="btn btn-primary" data-goto="nobar" type="button"><i class="fas fa-tv"></i> Mulai Nobar</button>
+            <button class="btn btn-secondary" data-goto="explore" type="button"><i class="fas fa-compass"></i> Jelajahi</button>
+          </div>
         </div>
       </div>
     </main>
@@ -221,5 +226,14 @@
   <script src="js/extras.js"></script>
   <script src="js/onboarding.js"></script>
   <script src="js/soundboard.js"></script>
+  <script>
+    // UI/UX Pro Max: empty-state CTA → navigasi via sidebar (tap-friendly, bukan hover-only)
+    document.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest('[data-goto]') : null;
+      if (!btn) return;
+      var target = document.querySelector('.sidebar-item[data-page="' + btn.dataset.goto + '"]');
+      if (target) target.click();
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,142 @@
+/* Nobarly Design System — UI/UX Pro Max override layer
+ * Generated from: .opencode/skills/ui-ux-pro-max + design-system/nobarly/MASTER.md
+ * Pattern: Feature-Rich Showcase | Style: Vibrant & Block-based + Dark OLED
+ * Stack: html-tailwind (vanilla HTML/CSS/JS, Electron + Capacitor)
+ * Cara pakai: file ini di-load SETELAH style.css / mobile.css, jadi override aman.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Vibrant accents — dari UI/UX Pro Max design-system generation */
+  --nobarly-primary: #E11D48;
+  --nobarly-on-primary: #FFFFFF;
+  --nobarly-secondary: #FB7185;
+  --nobarly-accent: #2563EB;
+  --nobarly-on-accent: #FFFFFF;
+  --nobarly-bg-soft: #121212;
+  --nobarly-card: #0d0d0d;
+  --nobarly-border-soft: #2a2a2a;
+  --nobarly-ring: rgba(225, 29, 72, 0.35);
+  --nobarly-accent-ring: rgba(37, 99, 235, 0.35);
+  --nobarly-gradient: linear-gradient(135deg, #E11D48 0%, #7c2d12 45%, #2563EB 100%);
+  --nobarly-font-display: 'Russo One', 'Inter', sans-serif;
+  --nobarly-font-body: 'Chakra Petch', 'Inter', sans-serif;
+  --nobarly-transition: 200ms ease;
+}
+
+/* Display font untuk branding / heading — body tetap Inter biar gak break readability */
+.sidebar-header h2,
+.auth-logo h1,
+.content-header h2,
+.empty-state h3 {
+  font-family: var(--nobarly-font-display);
+  letter-spacing: 1.5px;
+}
+
+/* Logo dengan gradient text */
+.auth-logo h1,
+.sidebar-header h2 {
+  background: linear-gradient(90deg, #fff 20%, var(--nobarly-secondary) 55%, var(--nobarly-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Primary button: vibrant rose → hover shift ke blue (bold hover color shift 200-300ms) */
+.btn-primary {
+  background: var(--nobarly-primary) !important;
+  border-color: var(--nobarly-primary) !important;
+  color: var(--nobarly-on-primary) !important;
+  box-shadow: 3px 3px 0px rgba(225,29,72,.35) !important;
+  transition: transform var(--nobarly-transition), box-shadow var(--nobarly-transition), background var(--nobarly-transition) !important;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--nobarly-accent) !important;
+  border-color: var(--nobarly-accent) !important;
+  box-shadow: 4px 4px 0px rgba(37,99,235,.4) !important;
+}
+.btn-primary:active { transform: translate(1px,1px); box-shadow: 1px 1px 0px rgba(0,0,0,.6) !important; }
+
+/* Sidebar active: dari putih polos → gradient block gaming */
+.sidebar-item.active {
+  background: var(--nobarly-gradient) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.2);
+  box-shadow: 3px 3px 0px rgba(225,29,72,.4) !important;
+}
+.sidebar-item { cursor: pointer; transition: background var(--nobarly-transition), color var(--nobarly-transition), transform var(--nobarly-transition); }
+.sidebar-item:hover { transform: translateX(2px); }
+
+/* Semua clickable wajib cursor-pointer + focus visible (a11y) */
+button, .btn, .sidebar-item, .community-card, .oauth-btn, select, summary, a {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--nobarly-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--nobarly-accent-ring);
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--nobarly-primary) !important;
+  box-shadow: 0 0 0 3px var(--nobarly-ring) !important;
+}
+
+/* Auth card: gradient border tipis biar gak flat */
+.auth-card {
+  border: 1px solid var(--nobarly-border-soft) !important;
+  position: relative;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+.auth-card::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: var(--nobarly-gradient);
+}
+.oauth-btn { transition: background var(--nobarly-transition), transform var(--nobarly-transition), border-color var(--nobarly-transition); border-radius: 8px !important; }
+.oauth-btn:hover { background: #222 !important; border-color: var(--nobarly-primary) !important; transform: translateY(-1px); }
+
+/* Cards & empty-state: hover lebih hidup */
+.community-card:hover { border-color: var(--nobarly-primary) !important; transform: translateY(-2px); }
+.empty-state { padding: 32px 16px; }
+.empty-state i { opacity: .9 !important; background: var(--nobarly-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.empty-state .cta-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+
+/* User status: kasih dot online hijau biar jelas */
+.user-status { display: inline-flex; align-items: center; gap: 6px; }
+.user-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+
+/* Skeleton loading (jangan blank screen) */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #1a1a1a !important;
+  border-radius: 8px;
+  min-height: 14px;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+  animation: nobarly-shimmer 1.2s infinite;
+}
+@keyframes nobarly-shimmer { from { transform: translateX(-100%);} to { transform: translateX(100%);} }
+
+/* Spinner pakai warna primary */
+.spinner { border-top-color: var(--nobarly-primary) !important; }
+
+/* Reduced motion: hormati setting OS */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .skeleton::after { animation: none; }
+}
+
+/* Responsive: auth-card full di HP kecil */
+@media (max-width: 480px) {
+  .auth-card { padding: 24px 20px !important; border-radius: 12px !important; box-shadow: none !important; }
+  .content-body { padding: 16px !important; }
+}

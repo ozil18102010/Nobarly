@@ -33,6 +33,19 @@ async function _oauthSaveToken(token, provider) {
 }
 
 function startOAuth(provider) {
+  // Cegah navigasi buta ke halaman JSON 400 kalau provider belum dikonfigurasi
+  // (mis. server lokal tanpa GOOGLE_CLIENT_ID) — tampilkan pesan ramah di form.
+  try {
+    var cfg = window._oauthProviders || null;
+    if (cfg && cfg[provider] === false) {
+      var msg = provider === 'google'
+        ? 'Login Google belum dikonfigurasi di server ini. Isi GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET di .env (lokal) / Railway (online), lalu restart server.'
+        : 'Login ' + provider + ' belum dikonfigurasi di server ini.';
+      if (typeof showError === 'function') showError(msg);
+      else alert(msg);
+      return;
+    }
+  } catch (_) {}
   var base = _oauthApiBase();
   var native = _isNative();
   var url = base + '/auth/oauth/' + encodeURIComponent(provider) + '?target=' + (native ? 'native' : 'web');
@@ -98,11 +111,23 @@ document.addEventListener('DOMContentLoaded', function () {
   // 3) Tampilkan tombol yang dikonfigurasi server
   if (box) {
     var show = function (cfg) {
+      try { window._oauthProviders = cfg || null; } catch (_) {}
       ['google', 'github'].forEach(function (p) {
         var btn = document.getElementById('oauth-' + p);
         if (!btn) return;
-        // null/undefined (server lama tanpa endpoint) → tampilkan semua, server yang menolak
-        btn.style.display = (!cfg || cfg[p] !== false) ? 'flex' : 'none';
+        if (!cfg) {
+          // Server tidak menjawab / server lama: tampilkan semua, server yang menolak
+          btn.style.display = 'flex';
+          btn.removeAttribute('disabled');
+          btn.title = '';
+          return;
+        }
+        if (cfg[p] === false) {
+          // Provider belum dikonfigurasi: sembunyikan biar user tidak klik → 400
+          btn.style.display = 'none';
+          return;
+        }
+        btn.style.display = 'flex';
       });
       if (box.querySelectorAll('[id^="oauth-"]:not([style*="none"])').length > 0) box.style.display = 'block';
     };

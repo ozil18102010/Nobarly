@@ -4,7 +4,7 @@ Platform nonton streaming bareng (nobar) + komunitas gamer: party YouTube & Twit
 playback-nya sinkron ngikutin host, voice channel + soundboard, chat & DM real-time,
 komunitas game, dan customize profil gratis (avatar GIF, nameplate, banner).
 
-**Versi saat ini: v2.17.0** — download APK di
+**Versi saat ini: v2.18.0** — download APK di
 [Releases](https://github.com/ozil18102010/Nobarly/releases/latest).
 
 ## Fitur
@@ -20,7 +20,7 @@ komunitas game, dan customize profil gratis (avatar GIF, nameplate, banner).
 ## Download APK
 
 Ambil versi terbaru di [Releases](https://github.com/ozil18102010/Nobarly/releases/latest)
-(`nobarly-v2.17.0.apk`). Kalau muncul "Unknown app / Install anyway", itu wajar
+(`nobarly-v2.18.0.apk`). Kalau muncul "Unknown app / Install anyway", itu wajar
 karena belum lewat Play Store — pilih Install anyway.
 
 ## Jalanin lokal (development)
@@ -51,7 +51,7 @@ Server lokal jalan di `http://localhost:5000` (ikut `SERVER_PORT`/`PORT` di `.en
 
 ```bash
 ./scripts/build-apk.sh
-# hasil: android/app/build/outputs/apk/debug/nobarly-v2.17.0.apk
+# hasil: android/app/build/outputs/apk/debug/nobarly-v2.18.0.apk
 ```
 
 Butuh JDK 17 (script download otomatis sekali) + Android SDK.

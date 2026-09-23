@@ -21,6 +21,9 @@ android/build/
 # Electron
 dist/
 
+# UI/UX Pro Max skill assets (generated, reinstall via: uipro init --ai opencode)
+.opencode/skills/
+
 # OS / editor
 .DS_Store
 Thumbs.db
